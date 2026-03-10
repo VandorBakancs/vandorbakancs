@@ -1,64 +1,52 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
-import Navbar from './components/Navbar';
-import { Mountain, Layers, Map, MessageSquare, BookOpen, ChevronDown } from 'lucide-react';
+import { Compass, Map, MessageSquare, ChevronRight } from 'lucide-react';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="min-h-screen flex bg-[#f0fdf4]">
-      {/* SIDEBAR */}
-      <aside className="w-72 bg-white border-r border-green-100 p-8 hidden lg:block sticky top-0 h-screen shadow-sm">
-        <div className="mb-16 px-2 text-2xl font-black text-green-600 flex items-center gap-2">
-            <Mountain size={32} />
-            <span>VándorBakancs</span>
-        </div>
-        <div className="mb-12 px-2">
-          <h2 className="text-sm font-black text-green-800 uppercase tracking-widest mb-6 font-bold">Menü</h2>
-          <nav className="space-y-3 font-bold">
-            <Link href="/" className="flex items-center gap-4 p-4 rounded-2xl bg-green-600 text-white shadow-lg transition-all">
-                <Layers size={20}/> Főoldal
-            </Link>
-            <Link href="/rolunk" className="flex items-center gap-4 p-4 rounded-2xl text-green-800/50 hover:bg-green-50 transition-all">
-                <BookOpen size={20}/> Rólunk
-            </Link>
-            <Link href="/turak" className="flex items-center gap-4 p-4 rounded-2xl text-green-800/50 hover:bg-green-50 transition-all">
-                <Map size={20}/> Túrák
-            </Link>
-            <Link href="/forum" className="flex items-center gap-4 p-4 rounded-2xl text-green-800/50 hover:bg-green-50 transition-all">
-                <MessageSquare size={20}/> Fórum
-            </Link>
-          </nav>
-        </div>
-      </aside>
+    <main className="p-10 max-w-6xl mx-auto space-y-16">
+      {/* Hero szekció */}
+      <section className="text-center pt-10 space-y-6">
+        <h1 className="text-7xl font-black text-green-900 italic uppercase tracking-tighter">
+          Üdvözlünk!
+        </h1>
+        <p className="text-xl text-green-800/60 font-bold max-w-2xl mx-auto leading-relaxed">
+          Fedezd fel a legszebb túraútvonalakat! Csatlakozz hozzánk, és járd be Magyarország, illetve Erdély legcsodálatosabb tájait.
+        </p>
+        <Link href="/turak" className="inline-block bg-green-600 text-white px-10 py-5 rounded-3xl font-black uppercase text-sm shadow-xl shadow-green-200 hover:scale-105 transition-all">
+          Túrák böngészése
+        </Link>
+      </section>
 
-      <main className="flex-1">
-        <Navbar />
-        <div className="p-10 max-w-5xl mx-auto space-y-16 mt-20">
-          <section className="text-center space-y-4">
-            <h1 className="text-6xl font-black text-green-900 uppercase italic">Üdvözlünk!</h1>
-            <p className="text-xl text-green-700 max-w-2xl mx-auto font-medium leading-relaxed">
-              Fedezd fel a legszebb túraútvonalakat! Csatlakozz hozzánk, és járd be Magyarország, illetve Erdély legcsodálatosabb tájait.
-            </p>
-            <Link href="/turak" className="inline-block bg-green-600 text-white px-10 py-5 rounded-full font-black uppercase tracking-widest shadow-xl hover:bg-green-700 transition-all">
-              Túrák böngészése
-            </Link>
-          </section>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white p-8 rounded-[2.5rem] border border-green-50 shadow-sm space-y-4">
-              <h2 className="text-2xl font-black text-green-900">Rólunk</h2>
-              <p className="text-green-800/60 font-medium">Ismerd meg a VándorBakancs történetét és céljait.</p>
-              <Link href="/rolunk" className="inline-block bg-green-50 text-green-600 px-8 py-3 rounded-2xl font-black uppercase text-xs hover:bg-green-600 hover:text-white transition-all">Tovább</Link>
-            </div>
-            <div className="bg-white p-8 rounded-[2.5rem] border border-green-50 shadow-sm space-y-4">
-              <h2 className="text-2xl font-black text-green-900">Fórum</h2>
-              <p className="text-green-800/60 font-medium">Beszélgess más túrázókkal és oszd meg az élményeid.</p>
-              <Link href="/forum" className="inline-block bg-green-50 text-green-600 px-8 py-3 rounded-2xl font-black uppercase text-xs hover:bg-green-600 hover:text-white transition-all">Tovább</Link>
-            </div>
+      {/* Kártyák */}
+      <div className="grid md:grid-cols-2 gap-8">
+        <div className="bg-white p-12 rounded-[4rem] shadow-sm border border-green-50 space-y-6 group">
+          <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all">
+            <Compass size={32} />
           </div>
+          <div>
+            <h2 className="text-3xl font-black text-green-900 italic uppercase">Rólunk</h2>
+            <p className="text-green-800/50 font-bold mt-2">Ismerj meg minket jobban és tudd meg, miért szeretünk túrázni.</p>
+          </div>
+          <Link href="/rolunk" className="inline-flex items-center gap-2 bg-green-50 text-green-600 px-6 py-3 rounded-2xl font-black uppercase text-xs hover:bg-green-100 transition-all">
+            Tovább <ChevronRight size={14} />
+          </Link>
         </div>
-      </main>
-    </div>
+
+        <div className="bg-white p-12 rounded-[4rem] shadow-sm border border-green-50 space-y-6 group">
+          <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all">
+            <MessageSquare size={32} />
+          </div>
+          <div>
+            <h2 className="text-3xl font-black text-green-900 italic uppercase">Fórum</h2>
+            <p className="text-green-800/50 font-bold mt-2">Beszélgess más túrázókkal és oszd meg az élményeidet.</p>
+          </div>
+          <Link href="/forum" className="inline-flex items-center gap-2 bg-green-50 text-green-600 px-6 py-3 rounded-2xl font-black uppercase text-xs hover:bg-green-100 transition-all">
+            Tovább <ChevronRight size={14} />
+          </Link>
+        </div>
+      </div>
+    </main>
   );
 }

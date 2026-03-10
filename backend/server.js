@@ -13,7 +13,7 @@ const config = {
     user: 'sa', 
     password: 'geci123', 
     server: 'DAVID\\SQLEXPRESS', 
-    database: 'VandorBakancsDB', 
+    database: 'VandorBakancsDb', 
     options: {
         encrypt: false, // Helyi fejlesztésnél false
         trustServerCertificate: true // Self-signed cert miatt kötelező
