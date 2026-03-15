@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { MapPin, Clock, Search, ChevronRight, Mountain } from 'lucide-react';
+import { MapPin, Clock, Search, ChevronRight, Mountain, BarChart } from 'lucide-react';
 
 export default function TurakPage() {
   const [turak, setTurak] = useState<any[]>([]);
@@ -8,7 +8,8 @@ export default function TurakPage() {
   const [kereso, setKereso] = useState("");
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/turak')
+    // Használjuk a 127.0.0.1-et a localhost hiba elkerülésére
+    fetch('http://127.0.0.1:5000/api/turak')
       .then(res => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -18,7 +19,7 @@ export default function TurakPage() {
   }, []);
 
   const szurtTurak = turak.filter(t => 
-    (t.Megnevezes || "").toLowerCase().includes(kereso.toLowerCase())
+    (t.nev || "").toLowerCase().includes(kereso.toLowerCase())
   );
 
   return (
@@ -39,20 +40,21 @@ export default function TurakPage() {
       <div className="grid gap-4">
         {hiba ? (
           <div className="bg-white p-10 rounded-[2.5rem] text-center border border-red-100 text-red-600 font-bold shadow-sm">
-            Hiba az adatbázis elérésekor! Indítsd el a backend szervert.
+            Szerver hiba! Ellenőrizd a backend futását és az adatbázis kapcsolatot.
           </div>
         ) : szurtTurak.length > 0 ? (
           szurtTurak.map((t: any) => (
-            <div key={t.Id} className="bg-white p-6 rounded-[2.5rem] border border-green-50 flex justify-between items-center shadow-sm hover:shadow-md transition-all group">
+            <div key={t.id} className="bg-white p-6 rounded-[2.5rem] border border-green-50 flex justify-between items-center shadow-sm hover:shadow-md transition-all group">
               <div className="flex items-center gap-6">
                 <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all">
                   <Mountain size={24} />
                 </div>
                 <div>
-                  <h3 className="font-black text-green-900 text-xl">{t.Megnevezes}</h3>
-                  <div className="flex gap-4 text-xs font-bold text-green-500 uppercase mt-1">
-                    <span className="flex items-center gap-1"><MapPin size={14}/> {t.Helyszin || t.Helszin}</span>
-                    <span className="flex items-center gap-1"><Clock size={14}/> {t.Idotartam}</span>
+                  <h3 className="font-black text-green-900 text-xl">{t.nev}</h3>
+                  <div className="flex flex-wrap gap-4 text-xs font-bold text-green-500 uppercase mt-1">
+                    <span className="flex items-center gap-1"><MapPin size={14}/> {t.helyszin}</span>
+                    <span className="flex items-center gap-1"><Clock size={14}/> {t.idotartam}</span>
+                    <span className="flex items-center gap-1"><BarChart size={14}/> {t.nehezseg}</span>
                   </div>
                 </div>
               </div>
