@@ -27,7 +27,7 @@ export default function AdminPage() {
 
     const fetchTurak = async () => {
     try {
-        const res = await fetch('http://localhost:3000/api/turak');
+        const res = await fetch('http://localhost:5000/api/turak');
         const result = await res.json();
         if (result.success) {
             setTurak(result.data); // Fontos: a 'result.data'-ban van a tömb!

@@ -24,3 +24,59 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+html[data-theme="dark"] body {
+  background-color: #121212 !important; /* Nagyon sötét háttér */
+  color: #e5e5e5 !important;
+}
+
+/*  A főoldal konténere (a zöldes háttér eltüntetése) */
+html[data-theme="dark"] main, 
+html[data-theme="dark"] .flex-1 {
+  background-color: #121212 !important;
+}
+
+/*  Navbar átfestése */
+html[data-theme="dark"] .navbar-custom {
+  background-color: #1e1e1e !important;
+  border-color: #2a2a2a !important;
+}
+
+/*  Sidebar átfestése */
+html[data-theme="dark"] aside {
+  background-color: #1a1a1a !important;
+  border-color: #2a2a2a !important;
+}
+
+/*  Fehér kártyák a főoldalon (Rólunk, Fórum) */
+html[data-theme="dark"] .bg-white {
+  background-color: #1e1e1e !important;
+  border-color: #2a2a2a !important;
+}
+
+/*  Szövegek átláthatósága */
+html[data-theme="dark"] h1, 
+html[data-theme="dark"] h2, 
+html[data-theme="dark"] h3 {
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] p, 
+html[data-theme="dark"] span {
+  color: #b3b3b3 !important;
+}
+
+/* Ikonok és Gombok */
+html[data-theme="dark"] .logo-text {
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .theme-button {
+  background-color: #2a2a2a !important;
+  color: #fbbf24 !important; /* Sárga hold/nap */
+}
+
+html[data-theme="dark"] .bg-green-50 {
+  background-color: #2a2a2a !important;
+  color: #10b981 !important;
+}

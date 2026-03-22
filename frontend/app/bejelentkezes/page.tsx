@@ -17,14 +17,14 @@ export default function LoginPage() {
 
         try {
             // A backend a 3000-es porton fut
-            const response = await fetch('http://localhost:3000/api/auth/login', {
+            const response = await fetch('http://localhost:5000/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: formData.email,      // Javítva: formData-ból vesszük
-                    password: formData.password  // Javítva: formData-ból vesszük
+                    email: formData.email,      
+                    password: formData.password  
                 }),
             });
 
@@ -33,7 +33,7 @@ export default function LoginPage() {
             if (response.ok && data.success) {
                 console.log('Sikeres belépés!', data.user);
                 
-                // Felhasználó mentése (hogy az admin oldal tudja, ki vagy)
+                // Felhasználó mentése 
                 localStorage.setItem('user', JSON.stringify(data.user));
                 
                 // Átirányítás az admin felületre

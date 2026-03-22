@@ -5,9 +5,9 @@ const sql = require('mssql');
 const config = {
     user: 'sa',
     password: process.env.DB_PASSWORD,
-    server: '127.0.0.1', // localhost helyett fix IP
+    server: '127.0.0.1', 
     database: 'VandorBakancsDb',
-    port: 1433,          // Fix port az SQL Express-nek
+    port: 1433,          
     options: {
         encrypt: false,
         trustServerCertificate: true,

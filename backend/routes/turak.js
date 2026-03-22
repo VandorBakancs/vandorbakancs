@@ -2,10 +2,10 @@ const express = require('express');
 const { sql, poolPromise } = require('../dbconfig');
 const router = express.Router();
 
-// Összes túra lekérése
+// 1. Összes túra lekérése
 router.get('/', async (req, res) => {
     try {
-        const pool = await poolPromise; // Itt várjuk meg a tényleges kapcsolatot
+        const pool = await poolPromise; 
         const result = await pool.request().query('SELECT * FROM Turak');
         res.json({ success: true, data: result.recordset });
     } catch (err) {
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Új túra hozzáadása
+// 2. Új túra hozzáadása
 router.post('/', async (req, res) => {
     try {
         const { nev, helyszin, idotartam, nehezseg } = req.body;
@@ -24,19 +24,21 @@ router.post('/', async (req, res) => {
             .input('i', sql.NVarChar, idotartam)
             .input('neh', sql.NVarChar, nehezseg)
             .query('INSERT INTO Turak (nev, helyszin, idotartam, nehezseg) VALUES (@n, @h, @i, @neh)');
+        
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
-// Törlés
+// 3. Túra törlése
 router.delete('/:id', async (req, res) => {
     try {
         const pool = await poolPromise;
         await pool.request()
-            .input('id', sql.Int, req.params.id)
-            .query('DELETE FROM Turak WHERE id = @id');
+            .input('id', sql.Int, req.params.id) 
+            .query('DELETE FROM Turak WHERE id = @id'); 
+            
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
