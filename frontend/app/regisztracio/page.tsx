@@ -16,7 +16,6 @@ export default function RegisterPage() {
         setLoading(true);
 
         try {
-            // 👈 Átírva a 3000-es portra és /api/auth/register végpontra!
             const res = await fetch('http://localhost:5000/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

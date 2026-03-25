@@ -16,14 +16,14 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            // A backend a 3000-es porton fut
+            // A backend az 5000-es porton fut
             const response = await fetch('http://localhost:5000/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: formData.email,      
+                    email: formData.email.trim(), // Levágja a felesleges szóközöket a végéről!     
                     password: formData.password  
                 }),
             });
@@ -33,17 +33,21 @@ export default function LoginPage() {
             if (response.ok && data.success) {
                 console.log('Sikeres belépés!', data.user);
                 
-                // Felhasználó mentése 
+                // Felhasználó mentése a böngészőbe
                 localStorage.setItem('user', JSON.stringify(data.user));
                 
-                // Átirányítás az admin felületre
-                router.push('/admin'); 
+                // 🟢 JAVÍTÁS: router.push helyett window.location.href a teljes oldalfrissítésért!
+                if (data.user.role === 'admin') {
+                    window.location.href = '/admin'; 
+                } else {
+                    window.location.href = '/'; 
+                }
             } else {
                 setError(data.error || 'Helytelen adatok!');
             }
         } catch (err) {
             console.error('Hiba a kérés során:', err);
-            setError('A szerver nem válaszol! Indítsd el a backendet a 3000-es porton.');
+            setError('A szerver nem válaszol! Indítsd el a backendet az 5000-es porton.');
         } finally {
             setLoading(false);
         }

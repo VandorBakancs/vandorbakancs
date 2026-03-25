@@ -27,9 +27,7 @@ export default function TurakPage() {
   const egyediNehezsegek = Array.from(new Set(turak.map(t => t.nehezseg).filter(Boolean)));
   const egyediIdotartamok = Array.from(new Set(turak.map(t => t.idotartam).filter(Boolean)));
 
-  // 🧠 Atombiztos, ékezet-kompatibilis szűrés
   const szurtTurak = turak.filter(t => {
-    // Minden szöveget kisbetűssé teszünk és levágjuk a felesleges szóközöket a biztos egyezésért
     const nev = (t.nev || "").trim().toLowerCase();
     const helyszin = (t.helyszin || "").trim().toLowerCase();
     const nehezseg = (t.nehezseg || "").trim().toLowerCase();

@@ -3,24 +3,34 @@ const { sql, poolPromise } = require('../dbconfig');
 const router = express.Router();
 
 // ==========================================
-// 1. BEJELENTKEZÉS (POST: http://localhost:3000/api/auth/login)
+// 1. BEJELENTKEZÉS (Sima szöveges jelszóval)
 // ==========================================
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-
         const pool = await poolPromise; 
         
         const result = await pool.request()
-            .input('e', sql.NVarChar, email)
-            .input('p', sql.NVarChar, password)
-            .query('SELECT id, nev, role FROM Users WHERE email = @e AND password = @p');
+            .input('email', sql.NVarChar, email)
+            .input('password', sql.NVarChar, password)
+            .query('SELECT id, nev, email, role FROM Users WHERE email = @email AND password = @password');
 
-        if (result.recordset.length > 0) {
-            res.json({ success: true, user: result.recordset[0] });
-        } else {
-            res.status(401).json({ success: false, error: "Hibás email cím vagy jelszó!" });
+        if (result.recordset.length === 0) {
+            return res.status(401).json({ success: false, error: "Hibás email cím vagy jelszó!" });
         }
+
+        const user = result.recordset[0];
+
+        res.json({ 
+            success: true, 
+            user: {
+                id: user.id,
+                nev: user.nev,
+                email: user.email,
+                role: user.role
+            } 
+        });
+
     } catch (error) {
         console.error("Bejelentkezési hiba a szerveren:", error.message);
         res.status(500).json({ success: false, error: error.message });
@@ -28,15 +38,18 @@ router.post('/login', async (req, res) => {
 });
 
 // ==========================================
-// 2. REGISZTRÁCIÓ (POST: http://localhost:3000/api/auth/register)
+// 2. REGISZTRÁCIÓ (Sima szöveges jelszóval)
 // ==========================================
 router.post('/register', async (req, res) => {
     try {
         const { nev, email, password } = req.body;
 
+        if (!nev || !email || !password) {
+            return res.status(400).json({ success: false, error: "Minden mező kitöltése kötelező!" });
+        }
+
         const pool = await poolPromise;
 
-        // Először ellenőrizzük, hogy létezik-e már ez az email cím
         const checkUser = await pool.request()
             .input('email', sql.NVarChar, email)
             .query('SELECT id FROM Users WHERE email = @email');
@@ -45,7 +58,6 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ success: false, error: "Ez az email cím már használatban van!" });
         }
 
-        // Ha szabad az email, beszúrjuk az új felhasználót (alapértelmezetten 'user' role-lal)
         await pool.request()
             .input('nev', sql.NVarChar, nev)
             .input('email', sql.NVarChar, email)

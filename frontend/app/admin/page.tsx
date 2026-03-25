@@ -86,7 +86,7 @@ const deleteTura = async (id: number) => {
                     </div>
                 </div>
             </div>
-            {/* Modal marad az előző verzióból... */}
+            
         </div>
     );
 }

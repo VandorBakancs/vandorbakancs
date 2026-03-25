@@ -1,44 +1,70 @@
--- 1. Adatbázis létrehozása
+USE master;
+GO
+
+-- ADATBÁZIS LÉTREHOZÁSA (Ha még nem létezik)
 IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'VandorBakancsDb')
 BEGIN
     CREATE DATABASE VandorBakancsDb;
 END
 GO
+
 USE VandorBakancsDb;
 GO
 
--- 2. Táblák törlése az újrastrukturáláshoz
+-- RÉGI TÁBLÁK TÖRLÉSE (Kapcsolati kényszerek miatt fordított sorrendben)
+IF OBJECT_ID('ForumKommentek', 'U') IS NOT NULL DROP TABLE ForumKommentek;
+IF OBJECT_ID('ForumTemak', 'U') IS NOT NULL DROP TABLE ForumTemak;
 IF OBJECT_ID('Turak', 'U') IS NOT NULL DROP TABLE Turak;
 IF OBJECT_ID('Users', 'U') IS NOT NULL DROP TABLE Users;
 GO
 
--- 3. Felhasználók tábla
+
+-- FELHASZNÁLÓK TÁBLA (Users)
 CREATE TABLE Users (
     id int IDENTITY(1,1) PRIMARY KEY,
-    nev nvarchar(100),
-    email nvarchar(100) UNIQUE,
-    password nvarchar(255),
+    nev nvarchar(100) NOT NULL,
+    email nvarchar(100) UNIQUE NOT NULL,
+    password nvarchar(255) NOT NULL,
     role nvarchar(20) DEFAULT 'user'
 );
 
--- 4. Túrák tábla
+-- TÚRÁK TÁBLA (Turak)
 CREATE TABLE Turak (
     id int IDENTITY(1,1) PRIMARY KEY,
-    nev nvarchar(255),
-    helyszin nvarchar(255),
-    idotartam nvarchar(50),
-    nehezseg nvarchar(50)
+    nev nvarchar(255) NOT NULL,
+    helyszin nvarchar(255) NOT NULL,
+    idotartam nvarchar(50) NOT NULL,
+    nehezseg nvarchar(50) NOT NULL
+);
+
+-- FÓRUM TÉMÁK TÁBLA (ForumTemak)
+CREATE TABLE ForumTemak (
+    id int IDENTITY(1,1) PRIMARY KEY,
+    cim nvarchar(255) NOT NULL,
+    szerzo nvarchar(100) NOT NULL,
+    datum datetime DEFAULT GETDATE()
+);
+
+-- FÓRUM KOMMENTEK TÁBLA 
+CREATE TABLE ForumKommentek (
+    id int IDENTITY(1,1) PRIMARY KEY,
+    tema_id int NOT NULL,
+    szerzo nvarchar(100) NOT NULL,
+    szoveg nvarchar(MAX) NOT NULL,
+    datum datetime DEFAULT GETDATE(),
+    CONSTRAINT FK_Komment_Tema FOREIGN KEY (tema_id) REFERENCES ForumTemak(id) ON DELETE CASCADE
 );
 GO
 
--- 5. Admin és Teszt felhasználók beszúrása
+
+-- 🟢 JAVÍTOTT RÉSZ: Felhasználók beszúrása sima szöveges jelszóval
 INSERT INTO Users (nev, email, password, role) 
 VALUES 
-('Admin', 'admin@gmail.com', 'admin123', 'admin'),
-('Teszt Elek', 'teszt@elek.hu', 'jelszo123', 'user');
-GO
+('Adminisztrátor', 'admin@gmail.com', 'admin', 'admin'),
+('Teszt Elek', 'teszt@gmail.com', 'teszt123', 'user');
 
--- 6. Túrák feltöltése (Hagyjuk az SQL-re az ID generálást!)
+
+-- ADATOK FELTÖLTÉSE: Túrák
 INSERT INTO Turak (nev, helyszin, idotartam, nehezseg) VALUES 
 -- Erdélyi túrák
 ('Szent Anna-tó körüli séta', 'Erdély - Hargita', '2 óra', 'Könnyű'),
@@ -67,8 +93,24 @@ INSERT INTO Turak (nev, helyszin, idotartam, nehezseg) VALUES
 ('Bakony: Cuha-völgy', 'Bakony', '4 óra', 'Közepes'),
 ('Zengő csúcstúra', 'Mecsek', '3.5 óra', 'Közepes'),
 ('Velencei-hegység: Ingókövek', 'Pákozd', '2.5 óra', 'Könnyű');
+
+
+-- ADATOK FELTÖLTÉSE: Fórum témák
+INSERT INTO ForumTemak (cim, szerzo) VALUES 
+('Túrafelszerelés kezdőknek', 'Adminisztrátor'),
+('Erdélyi túrák tapasztalatok', 'Teszt Elek'),
+('Hova menjünk a hétvégén?', 'Teszt Elek');
+
+
+-- ADATOK FELTÖLTÉSE: Fórum hozzászólások 
+INSERT INTO ForumKommentek (tema_id, szerzo, szoveg) VALUES 
+(1, 'Teszt Elek', 'Szerintem a legfontosabb egy jó minőségű bakancs!'),
+(1, 'Adminisztrátor', 'Egyetértek! Plusz egy réteges öltözet és egy kényelmes zsák is kötelező.');
 GO
 
--- 7. Ellenőrzés
+
+-- ELLENŐRZÉSEK 
 SELECT * FROM Users;
 SELECT * FROM Turak;
+SELECT * FROM ForumTemak;
+SELECT * FROM ForumKommentek;

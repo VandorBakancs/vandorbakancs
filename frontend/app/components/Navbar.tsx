@@ -85,10 +85,7 @@ export default function Navbar() {
 
           {menuNyitva && (
             <>
-              {/* Láthatatlan háttér kattintás elkapásához (hogy bezáródjon) */}
               <div className="fixed inset-0 z-10" onClick={() => setMenuNyitva(false)}></div>
-              
-              {/* 🛠️ JAVÍTOTT LENYÍLÓ DOBOZ 🛠️ */}
               <div className="absolute right-0 md:-right-4 mt-3 w-64 bg-white border border-green-100 rounded-3xl shadow-xl p-2 z-50 flex flex-col gap-1 dropdown-custom">
                 
                 {user ? (
