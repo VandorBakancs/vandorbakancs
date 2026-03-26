@@ -55,7 +55,7 @@ router.get('/kommentek/:temaId', async (req, res) => {
     }
 });
 
-// ✍️Új komment mentése
+// ✍️ Új komment mentése
 router.post('/kommentek', async (req, res) => {
     try {
         const { tema_id, szerzo, szoveg } = req.body;
@@ -77,4 +77,36 @@ router.post('/kommentek', async (req, res) => {
     }
 });
 
-module.exports = router; 
+// 🗑️ Fórum téma törlése (Adminoknak)
+router.delete('/temak/:id', async (req, res) => {
+    try {
+        console.log(`\n🗑️ Beérkező téma törlés kérés, ID: ${req.params.id}`);
+        const pool = await poolPromise;
+        await pool.request()
+            .input('id', sql.Int, req.params.id)
+            .query('DELETE FROM ForumTemak WHERE id = @id');
+
+        res.json({ success: true, message: "Téma sikeresen törölve!" });
+    } catch (err) {
+        console.error("❌ Törlési hiba a backendben (temak):", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// 🗑️ Egy darab komment törlése (Adminoknak)
+router.delete('/kommentek/:id', async (req, res) => {
+    try {
+        console.log(`\n🗑️ Beérkező komment törlés kérés, ID: ${req.params.id}`);
+        const pool = await poolPromise;
+        await pool.request()
+            .input('id', sql.Int, req.params.id)
+            .query('DELETE FROM ForumKommentek WHERE id = @id');
+
+        res.json({ success: true, message: "Komment sikeresen törölve!" });
+    } catch (err) {
+        console.error("❌ Törlési hiba a backendben (kommentek):", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+module.exports = router;
