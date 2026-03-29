@@ -96,24 +96,28 @@ export default function HomePage() {
         </div>
 
         {/* 🗺️ GOOGLE MAPS TÉRKÉP SZEKCIÓ */}
-        <section className="space-y-10 pt-10">
-          <div className="text-center">
-            <h2 className="text-5xl font-black text-green-900 dark:text-white italic uppercase tracking-tighter">Helyszíneink</h2>
-            <p className="text-green-800/50 dark:text-gray-400 font-bold">Fedezd fel a túráinkat az interaktív térképen!</p>
-          </div>
+<section className="space-y-6 md:space-y-10 pt-5 md:pt-10">
+  <div className="text-center px-4">
+    <h2 className="text-4xl md:text-5xl font-black text-green-900 dark:text-white italic uppercase tracking-tighter transition-colors">
+      Helyszíneink
+    </h2>
+    <p className="text-green-800/50 dark:text-gray-400 font-bold text-sm md:text-base">
+      Fedezd fel a túráinkat az interaktív térképen!
+    </p>
+  </div>
 
-          {/* Térkép konténer a korábbi stílusoddal */}
-          <div className="w-full h-[500px] rounded-[4rem] overflow-hidden border-4 border-white dark:border-zinc-700 shadow-2xl relative">
-            <iframe 
-              src="https://www.google.com/maps/d/u/1/embed?mid=1tIZkUnkbdihBCTwvZyqUjn8N2pizhIQ&ehbc=2E312F" 
-              width="100%" 
-              height="100%" 
-              className="border-none"
-              allowFullScreen
-              loading="lazy"
-            ></iframe>
-          </div>
-        </section>
+  {/* Mobilbarát konténer: mobilon kisebb kerekítés, asztalin a nagy [4rem] */}
+  <div className="w-full h-[400px] md:h-[500px] rounded-[2rem] md:rounded-[4rem] overflow-hidden border-2 md:border-4 border-white dark:border-zinc-700 shadow-2xl relative">
+    <iframe 
+      src="https://www.google.com/maps/d/u/1/embed?mid=1tIZkUnkbdihBCTwvZyqUjn8N2pizhIQ&ehbc=2E312F" 
+      width="100%" 
+      height="100%" 
+      className="border-none"
+      allowFullScreen
+      loading="lazy"
+    ></iframe>
+  </div>
+</section>
 
       </div>
     </main>
