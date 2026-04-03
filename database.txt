@@ -11,15 +11,15 @@ GO
 USE VandorBakancsDb;
 GO
 
--- RÉGI TÁBLÁK TÖRLÉSE (Kapcsolati kényszerek miatt fordított sorrendben)
+-- RÉGI TÁBLÁK TÖRLÉSE 
+IF OBJECT_ID('KedvencTurak', 'U') IS NOT NULL DROP TABLE KedvencTurak;
 IF OBJECT_ID('ForumKommentek', 'U') IS NOT NULL DROP TABLE ForumKommentek;
 IF OBJECT_ID('ForumTemak', 'U') IS NOT NULL DROP TABLE ForumTemak;
 IF OBJECT_ID('Turak', 'U') IS NOT NULL DROP TABLE Turak;
 IF OBJECT_ID('Users', 'U') IS NOT NULL DROP TABLE Users;
 GO
 
-
--- FELHASZNÁLÓK TÁBLA (Users)
+-- FELHASZNÁLÓK TÁBLA
 CREATE TABLE Users (
     id int IDENTITY(1,1) PRIMARY KEY,
     nev nvarchar(100) NOT NULL,
@@ -28,16 +28,18 @@ CREATE TABLE Users (
     role nvarchar(20) DEFAULT 'user'
 );
 
--- TÚRÁK TÁBLA (Turak)
+-- TÚRÁK TÁBLA
 CREATE TABLE Turak (
     id int IDENTITY(1,1) PRIMARY KEY,
     nev nvarchar(255) NOT NULL,
     helyszin nvarchar(255) NOT NULL,
     idotartam nvarchar(50) NOT NULL,
-    nehezseg nvarchar(50) NOT NULL
+    nehezseg nvarchar(50) NOT NULL,
+    leiras nvarchar(MAX) NULL,
+    kinek_ajanljuk nvarchar(MAX) NULL
 );
 
--- FÓRUM TÉMÁK TÁBLA (ForumTemak)
+-- FÓRUM TÉMÁK TÁBLA
 CREATE TABLE ForumTemak (
     id int IDENTITY(1,1) PRIMARY KEY,
     cim nvarchar(255) NOT NULL,
@@ -45,7 +47,7 @@ CREATE TABLE ForumTemak (
     datum datetime DEFAULT GETDATE()
 );
 
--- FÓRUM KOMMENTEK TÁBLA 
+-- FÓRUM KOMMENTEK TÁBLA
 CREATE TABLE ForumKommentek (
     id int IDENTITY(1,1) PRIMARY KEY,
     tema_id int NOT NULL,
@@ -54,63 +56,70 @@ CREATE TABLE ForumKommentek (
     datum datetime DEFAULT GETDATE(),
     CONSTRAINT FK_Komment_Tema FOREIGN KEY (tema_id) REFERENCES ForumTemak(id) ON DELETE CASCADE
 );
-GO
 
+-- KEDVENC TÚRÁK TÁBLA 
+CREATE TABLE KedvencTurak (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    user_id INT NOT NULL,
+    tura_id INT NOT NULL,
+    datum DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (tura_id) REFERENCES Turak(id) ON DELETE CASCADE,
+    CONSTRAINT UC_UserTura UNIQUE (user_id, tura_id) -- ne lehessen kétszer szívezni ugyanazt
+);
 
--- 🟢 JAVÍTOTT RÉSZ: Felhasználók beszúrása sima szöveges jelszóval
+-- ADATOK FELTÖLTÉSE
+
+-- Felhasználók
 INSERT INTO Users (nev, email, password, role) 
 VALUES 
 ('Adminisztrátor', 'admin@gmail.com', 'admin', 'admin'),
 ('Teszt Elek', 'teszt@gmail.com', 'teszt123', 'user');
 
+-- ÖSSZES TÚRA (Minden Erdélyi és Magyarországi útvonal)
+INSERT INTO Turak (nev, helyszin, idotartam, nehezseg, leiras, kinek_ajanljuk) VALUES 
+('Szent Anna-tó körüli séta', 'Erdély - Hargita', '2 óra', 'Könnyű', 'A Szent Anna-tó Közép-Kelet-Európa egyetlen épen maradt vulkáni krátertava. A séta során megismerhetjük a tó legendáját és élvezhetjük a kristálytiszta levegőt.', 'Tökéletes választás családoknak és azoknak, akik egy könnyed sétára vágynak festői környezetben.'),
+('Gyilkos-tó és Békás-szoros', 'Erdély - Gyergyó', '4 óra', 'Közepes', 'A Gyilkos-tó egy természetes torlasz-tó, melynek különlegessége a vízből kiálló fenyőcsonkok. A Békás-szoros pedig Európa egyik leglátványosabb szurdokvölgye.', 'Természetkedvelőknek és fotósoknak, akik nem riadnak vissza egy kis szintkülönbségtől.'),
+('Tordai-hasadék túra', 'Erdély - Aranyosszék', '3 óra', 'Közepes', 'Hatalmas sziklafalak között kanyargó ösvény a Hesdát-patak mentén. Függőhidak és látványos barlangnyílások teszik izgalmassá.', 'Kalandvágyóknak és geológia iránt érdeklődőknek.'),
+('Madarasi Hargita csúcstúra', 'Erdély - Hargita', '5 óra', 'Nehéz', 'A "Székelyek Szent Hegye". A csúcsról tiszta időben szinte az egész Erdélyi-medence belátható.', 'Gyakorlottabb túrázóknak, akik bírják a meredek emelkedőket.'),
+('Fogarasi-havasok: Bilea-tó', 'Erdély - Fogaras', '6 óra', 'Nehéz', 'Magashegyi környezet a Transzfogarasi út mentén. A Bilea-tó egy gleccsertó, amely 2034 méter magasan fekszik.', 'Tapasztalt túrázóknak, akiket vonz a zord, de gyönyörű alpesi táj.'),
+('Királykő-hegység gerinctúra', 'Erdély - Brassó', '8 óra', 'Nagyon nehéz', 'Hosszú és technikás gerinctúra mesés kilátással.', 'Profi túrázóknak.'),
+('Medve-barlang látogatás', 'Erdély - Bihar', '1.5 óra', 'Könnyű', 'Földalatti csodavilág cseppkövekkel és barlangi medve csontvázakkal.', 'Bárkinek, aki szereti a barlangokat.'),
+('Torockó: Székelykő mászás', 'Erdély - Fehér', '4 óra', 'Nehéz', 'Meredek emelkedő a legendás sziklafalra, ahonnan a nap kétszer kel fel.', 'Kitartó mászóknak.'),
+('Parajdi Sóbánya és Sószoros', 'Erdély - Sóvidék', '2.5 óra', 'Könnyű', 'Gyógyhatású levegő a bányában és különleges sósziklák a felszínen.', 'Családoknak és gyógyulni vágyóknak.'),
+('Vargyas-szoros barlangtúra', 'Erdély - Erdővidék', '3.5 óra', 'Közepes', 'Vadonregényes szurdok számos látogatható barlanggal.', 'Kalandoroknak.'),
+('Kékes-tető csúcstámadás', 'Mátra', '4 óra', 'Nehéz', 'Magyarország legmagasabb pontja, a csúcskővel.', 'Minden magyar túrázónak kötelező.'),
+('Rám-szakadék kaland', 'Pilis', '3 óra', 'Közepes', 'Létrás-kapaszkodós izgalmas szurdokvölgy a Visegrádi-hegységben.', 'Akik szeretik a kihívásokat.'),
+('Prédikálószék kilátó', 'Dunakanyar', '5 óra', 'Nehéz', 'A legszebb kilátás a Dunakanyarra és a Visegrádi várra.', 'Edzettebb kirándulóknak.'),
+('Badacsony bazaltorgonák', 'Balaton-felvidék', '3.5 óra', 'Közepes', 'Vulkáni tanúhegy különleges bazaltoszlopokkal és pazar panorámával.', 'A Balaton szerelmeseinek.'),
+('Dobogókő kilátás', 'Visegrádi-hegység', '2 óra', 'Könnyű', 'Híres energia-központ és csodás panoráma a Dunakanyarra.', 'Pihenni vágyóknak.'),
+('Szalajka-völgy séta', 'Bükk', '2.5 óra', 'Könnyű', 'Fátyol-vízesés, pisztrángos tavak és erdei kisvasút.', 'Kisgyermekes családoknak.'),
+('Nagy-Eged hegy', 'Eger környéke', '3 óra', 'Közepes', 'Eger feletti kilátóhely, híres bortermő vidék.', 'Helyi kirándulóknak.'),
+('Csóványos kilátó', 'Börzsöny', '6 óra', 'Nehéz', 'A Börzsöny legmagasabb pontja egy régi geodéziai toronnyal.', 'Egész napos kalandot keresőknek.'),
+('Megyer-hegyi Tengerszem', 'Zemplén', '2 óra', 'Könnyű', 'Ember alkotta tó egy régi malomkőbányában, lenyűgöző sziklafalakkal.', 'Fotózni vágyóknak.'),
+('Hollókő vár túra', 'Cserhát', '3 óra', 'Könnyű', 'Világörökségi falu és egy középkori vár felfedezése.', 'Kultúra és természet kedvelőinek.'),
+('Bakony: Cuha-völgy', 'Bakony', '4 óra', 'Közepes', 'Patakátkelős völgy, ahol a vasút is a sziklák közt kanyarog.', 'Gyalogos túrázóknak.'),
+('Zengő csúcstúra', 'Mecsek', '3.5 óra', 'Közepes', 'A Mecsek legmagasabb csúcsa új kilátóval.', 'Baranyai túrázóknak.'),
+('Velencei-hegység: Ingókövek', 'Pákozd', '2.5 óra', 'Könnyű', 'Különleges gránit sziklaalakzatok, amik dacolnak a gravitációval.', 'Geológiai érdekességeket keresőknek.');
 
--- ADATOK FELTÖLTÉSE: Túrák
-INSERT INTO Turak (nev, helyszin, idotartam, nehezseg) VALUES 
--- Erdélyi túrák
-('Szent Anna-tó körüli séta', 'Erdély - Hargita', '2 óra', 'Könnyű'),
-('Gyilkos-tó és Békás-szoros', 'Erdély - Gyergyó', '4 óra', 'Közepes'),
-('Tordai-hasadék túra', 'Erdély - Aranyosszék', '3 óra', 'Közepes'),
-('Madarasi Hargita csúcstúra', 'Erdély - Hargita', '5 óra', 'Nehéz'),
-('Fogarasi-havasok: Bilea-tó', 'Erdély - Fogaras', '6 óra', 'Nehéz'),
-('Királykő-hegység gerinctúra', 'Erdély - Brassó', '8 óra', 'Nagyon nehéz'),
-('Medve-barlang látogatás', 'Erdély - Bihar', '1.5 óra', 'Könnyű'),
-('Torockó: Székelykő mászás', 'Erdély - Fehér', '4 óra', 'Nehéz'),
-('Parajdi Sóbánya és Sószoros', 'Erdély - Sóvidék', '2.5 óra', 'Könnyű'),
-('Vargyas-szoros barlangtúra', 'Erdély - Erdővidék', '3.5 óra', 'Közepes'),
-
--- Magyarországi túrák
-('Kékes-tető csúcstámadás', 'Mátra', '4 óra', 'Nehéz'),
-('Rám-szakadék kaland', 'Pilis', '3 óra', 'Közepes'),
-('Prédikálószék kilátó', 'Dunakanyár', '5 óra', 'Nehéz'),
-('Badacsony bazaltorgonák', 'Balaton-felvidék', '3.5 óra', 'Közepes'),
-('Írott-kő túra', 'Kőszegi-hegység', '4.5 óra', 'Közepes'),
-('Dobogókő kilátás', 'Visegrádi-hegység', '2 óra', 'Könnyű'),
-('Szalajka-völgy séta', 'Bükk', '2.5 óra', 'Könnyű'),
-('Nagy-Eged hegy', 'Eger környéke', '3 óra', 'Közepes'),
-('Csóványos kilátó', 'Börzsöny', '6 óra', 'Nehéz'),
-('Megyer-hegyi Tengerszem', 'Zemplén', '2 óra', 'Könnyű'),
-('Hollókő vár túra', 'Cserhát', '3 óra', 'Könnyű'),
-('Bakony: Cuha-völgy', 'Bakony', '4 óra', 'Közepes'),
-('Zengő csúcstúra', 'Mecsek', '3.5 óra', 'Közepes'),
-('Velencei-hegység: Ingókövek', 'Pákozd', '2.5 óra', 'Könnyű');
-
-
--- ADATOK FELTÖLTÉSE: Fórum témák
+-- Fórum adatok
 INSERT INTO ForumTemak (cim, szerzo) VALUES 
 ('Túrafelszerelés kezdőknek', 'Adminisztrátor'),
 ('Erdélyi túrák tapasztalatok', 'Teszt Elek'),
 ('Hova menjünk a hétvégén?', 'Teszt Elek');
 
-
--- ADATOK FELTÖLTÉSE: Fórum hozzászólások 
 INSERT INTO ForumKommentek (tema_id, szerzo, szoveg) VALUES 
 (1, 'Teszt Elek', 'Szerintem a legfontosabb egy jó minőségű bakancs!'),
 (1, 'Adminisztrátor', 'Egyetértek! Plusz egy réteges öltözet és egy kényelmes zsák is kötelező.');
 GO
 
+-- Kedvencek teszt adat
+INSERT INTO KedvencTurak (user_id, tura_id) VALUES (1, 1);
+GO
 
 -- ELLENŐRZÉSEK 
 SELECT * FROM Users;
 SELECT * FROM Turak;
 SELECT * FROM ForumTemak;
 SELECT * FROM ForumKommentek;
+SELECT * FROM KedvencTurak;

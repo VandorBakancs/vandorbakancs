@@ -233,7 +233,8 @@ export default function ForumPage() {
                 placeholder="Írd meg a véleményed..." 
                 value={ujKommentSzoveg}
                 onChange={(e) => setUjKommentSzoveg(e.target.value)}
-                className="flex-1 px-6 py-4 rounded-2xl border-none bg-green-50/30 outline-none font-bold text-sm"
+                /*Hozzáadva a sötét módos színek az inputhoz */
+                className="flex-1 px-6 py-4 rounded-2xl border-none bg-green-50/30 outline-none font-bold text-sm text-gray-800 dark:text-white dark:bg-zinc-800/50 placeholder:dark:text-gray-400"
               />
               <button type="submit" className="bg-green-600 text-white p-4 rounded-2xl hover:bg-green-700 transition-all"><Send size={20} /></button>
             </form>
