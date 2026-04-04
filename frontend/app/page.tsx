@@ -95,11 +95,7 @@ export default function HomePage() {
 
         <section className="space-y-10 pt-10">
           <div className="text-center">
-<<<<<<< HEAD
             <h2 className="text-5xl font-black text-green-900 italic uppercase tracking-tighter">Térkép</h2>
-=======
-            <h2 className="text-5xl font-black text-green-900 italic uppercase tracking-tighter">Helyszíneink</h2>
->>>>>>> 65f7360cc4f257e0e79ef8388d1e83ccc19571d0
             <p className="text-green-800/60 font-bold mt-2">Fedezd fel a túráinkat az interaktív térképen!</p>
           </div>
           <div className="w-full h-[500px] rounded-[4rem] overflow-hidden border-4 border-white shadow-2xl relative bg-white">
