@@ -1,25 +1,24 @@
 USE master;
 GO
 
--- ADATBÁZIS LÉTREHOZÁSA (Ha még nem létezik)
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'VandorBakancsDb')
+-- Biztos, ami biztos: ha mégis maradt volna valami a régi adatbázisból, kilőjük
+IF DB_ID('VandorBakancsDb') IS NOT NULL
 BEGIN
-    CREATE DATABASE VandorBakancsDb;
+    ALTER DATABASE VandorBakancsDb SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE VandorBakancsDb;
 END
+GO
+
+-- 1. ADATBÁZIS LÉTREHOZÁSA
+CREATE DATABASE VandorBakancsDb;
 GO
 
 USE VandorBakancsDb;
 GO
 
--- RÉGI TÁBLÁK TÖRLÉSE 
-IF OBJECT_ID('KedvencTurak', 'U') IS NOT NULL DROP TABLE KedvencTurak;
-IF OBJECT_ID('ForumKommentek', 'U') IS NOT NULL DROP TABLE ForumKommentek;
-IF OBJECT_ID('ForumTemak', 'U') IS NOT NULL DROP TABLE ForumTemak;
-IF OBJECT_ID('Turak', 'U') IS NOT NULL DROP TABLE Turak;
-IF OBJECT_ID('Users', 'U') IS NOT NULL DROP TABLE Users;
-GO
+-- 2. TÁBLÁK LÉTREHOZÁSA
 
--- FELHASZNÁLÓK TÁBLA
+-- Felhasználók tábla
 CREATE TABLE Users (
     id int IDENTITY(1,1) PRIMARY KEY,
     nev nvarchar(100) NOT NULL,
@@ -28,7 +27,7 @@ CREATE TABLE Users (
     role nvarchar(20) DEFAULT 'user'
 );
 
--- TÚRÁK TÁBLA
+-- Túrák tábla
 CREATE TABLE Turak (
     id int IDENTITY(1,1) PRIMARY KEY,
     nev nvarchar(255) NOT NULL,
@@ -39,25 +38,27 @@ CREATE TABLE Turak (
     kinek_ajanljuk nvarchar(MAX) NULL
 );
 
--- FÓRUM TÉMÁK TÁBLA
+-- Fórum Témák tábla (Itt már user_id van a szerzo helyett)
 CREATE TABLE ForumTemak (
     id int IDENTITY(1,1) PRIMARY KEY,
     cim nvarchar(255) NOT NULL,
-    szerzo nvarchar(100) NOT NULL,
-    datum datetime DEFAULT GETDATE()
+    user_id int NOT NULL, 
+    datum datetime DEFAULT GETDATE(),
+    CONSTRAINT FK_ForumTemak_Users FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
 );
 
--- FÓRUM KOMMENTEK TÁBLA
+-- Fórum Kommentek tábla (Itt is user_id van a szerzo helyett)
 CREATE TABLE ForumKommentek (
     id int IDENTITY(1,1) PRIMARY KEY,
     tema_id int NOT NULL,
-    szerzo nvarchar(100) NOT NULL,
+    user_id int NOT NULL, 
     szoveg nvarchar(MAX) NOT NULL,
     datum datetime DEFAULT GETDATE(),
-    CONSTRAINT FK_Komment_Tema FOREIGN KEY (tema_id) REFERENCES ForumTemak(id) ON DELETE CASCADE
+    CONSTRAINT FK_Komment_Tema FOREIGN KEY (tema_id) REFERENCES ForumTemak(id) ON DELETE CASCADE,
+    CONSTRAINT FK_Komment_User FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 
--- KEDVENC TÚRÁK TÁBLA 
+-- Kedvenc Túrák tábla
 CREATE TABLE KedvencTurak (
     id INT IDENTITY(1,1) PRIMARY KEY,
     user_id INT NOT NULL,
@@ -65,10 +66,11 @@ CREATE TABLE KedvencTurak (
     datum DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (tura_id) REFERENCES Turak(id) ON DELETE CASCADE,
-    CONSTRAINT UC_UserTura UNIQUE (user_id, tura_id) -- ne lehessen kétszer szívezni ugyanazt
+    CONSTRAINT UC_UserTura UNIQUE (user_id, tura_id)
 );
+GO
 
--- ADATOK FELTÖLTÉSE
+-- 3. ADATOK FELTÖLTÉSE
 
 -- Felhasználók
 INSERT INTO Users (nev, email, password, role) 
@@ -76,7 +78,7 @@ VALUES
 ('Adminisztrátor', 'admin@gmail.com', 'admin', 'admin'),
 ('Teszt Elek', 'teszt@gmail.com', 'teszt123', 'user');
 
--- ÖSSZES TÚRA (Minden Erdélyi és Magyarországi útvonal)
+-- ÖSSZES TÚRA (A teljes 23-as lista)
 INSERT INTO Turak (nev, helyszin, idotartam, nehezseg, leiras, kinek_ajanljuk) VALUES 
 ('Szent Anna-tó körüli séta', 'Erdély - Hargita', '2 óra', 'Könnyű', 'A Szent Anna-tó Közép-Kelet-Európa egyetlen épen maradt vulkáni krátertava. A séta során megismerhetjük a tó legendáját és élvezhetjük a kristálytiszta levegőt.', 'Tökéletes választás családoknak és azoknak, akik egy könnyed sétára vágynak festői környezetben.'),
 ('Gyilkos-tó és Békás-szoros', 'Erdély - Gyergyó', '4 óra', 'Közepes', 'A Gyilkos-tó egy természetes torlasz-tó, melynek különlegessége a vízből kiálló fenyőcsonkok. A Békás-szoros pedig Európa egyik leglátványosabb szurdokvölgye.', 'Természetkedvelőknek és fotósoknak, akik nem riadnak vissza egy kis szintkülönbségtől.'),
@@ -102,24 +104,17 @@ INSERT INTO Turak (nev, helyszin, idotartam, nehezseg, leiras, kinek_ajanljuk) V
 ('Zengő csúcstúra', 'Mecsek', '3.5 óra', 'Közepes', 'A Mecsek legmagasabb csúcsa új kilátóval.', 'Baranyai túrázóknak.'),
 ('Velencei-hegység: Ingókövek', 'Pákozd', '2.5 óra', 'Könnyű', 'Különleges gránit sziklaalakzatok, amik dacolnak a gravitációval.', 'Geológiai érdekességeket keresőknek.');
 
--- Fórum adatok
-INSERT INTO ForumTemak (cim, szerzo) VALUES 
-('Túrafelszerelés kezdőknek', 'Adminisztrátor'),
-('Erdélyi túrák tapasztalatok', 'Teszt Elek'),
-('Hova menjünk a hétvégén?', 'Teszt Elek');
+-- Fórum témák (1 = Admin, 2 = Teszt Elek)
+INSERT INTO ForumTemak (cim, user_id) VALUES 
+('Túrafelszerelés kezdőknek', 1),
+('Erdélyi túrák tapasztalatok', 2),
+('Hova menjünk a hétvégén?', 2);
 
-INSERT INTO ForumKommentek (tema_id, szerzo, szoveg) VALUES 
-(1, 'Teszt Elek', 'Szerintem a legfontosabb egy jó minőségű bakancs!'),
-(1, 'Adminisztrátor', 'Egyetértek! Plusz egy réteges öltözet és egy kényelmes zsák is kötelező.');
-GO
+-- Fórum kommentek
+INSERT INTO ForumKommentek (tema_id, user_id, szoveg) VALUES 
+(1, 2, 'Szerintem a legfontosabb egy jó minőségű bakancs!'),
+(1, 1, 'Egyetértek! Plusz egy réteges öltözet és egy kényelmes zsák is kötelező.');
 
 -- Kedvencek teszt adat
 INSERT INTO KedvencTurak (user_id, tura_id) VALUES (1, 1);
 GO
-
--- ELLENŐRZÉSEK 
-SELECT * FROM Users;
-SELECT * FROM Turak;
-SELECT * FROM ForumTemak;
-SELECT * FROM ForumKommentek;
-SELECT * FROM KedvencTurak;

@@ -45,6 +45,11 @@ DB_DATABASE=VandorBakancsDb
 DB_PORT=1433
 PORT=5000
 ```
+### .env.local
+
+```env.local
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
 
 ## 🛠️ Mit csinálj, ha Git hibát kapsz a VS Code-ban?
 

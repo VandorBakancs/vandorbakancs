@@ -76,7 +76,7 @@ export default function ForumPage() {
         mode: 'cors',
         body: JSON.stringify({
           cim: ujTemaCim,
-          szerzo: bejelentkezettUser.nev
+          user_id: bejelentkezettUser.id // Változtatás itt: név helyett ID-t küldünk
         })
       });
 
@@ -104,7 +104,7 @@ export default function ForumPage() {
         mode: 'cors',
         body: JSON.stringify({
           tema_id: aktivTema.id,
-          szerzo: bejelentkezettUser.nev,
+          user_id: bejelentkezettUser.id, // Változtatás itt: név helyett ID-t küldünk
           szoveg: ujKommentSzoveg
         })
       });

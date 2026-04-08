@@ -142,7 +142,6 @@ export default function AdminPage() {
                         <div className="p-4 bg-green-50 rounded-3xl text-green-600"><Mountain size={32}/></div>
                         <div>
                             <h1 className="text-2xl font-black text-green-900 uppercase italic leading-none">Admin Felület</h1>
-                            <p className="text-green-800/40 font-bold text-sm italic">Szia, {user.nev}!</p>
                         </div>
                     </div>
                     <button onClick={() => { localStorage.removeItem('user'); router.push('/bejelentkezes'); }} className="p-4 text-red-500 hover:bg-red-50 rounded-2xl transition-all flex items-center gap-2 font-bold">
