@@ -116,7 +116,7 @@ export default function HomePage() {
           <div className="w-full h-[500px] rounded-[3rem] overflow-hidden border-[6px] border-white shadow-2xl relative bg-green-50 group">
             <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500 pointer-events-none z-10" />
             <iframe 
-              src="https://www.google.com/maps/d/u/0/embed?mid=1tIZkUnkbdihBCTwvZyqUjn8N2pizhIQ&ehbc=2E312F"
+              src="https://www.google.com/maps/d/u/0/embed?mid=1tIZkUnkbdihBCTwvZyqUjn8N2pizhIQ&ehbc=2E312F&noprof=1"
               width="100%" 
               height="100%" 
               style={{ border: 0 }} 

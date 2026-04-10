@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { MapPin, Clock, Search, ChevronRight, Mountain, Info, CheckCircle, Heart } from 'lucide-react';
+import { MapPin, Clock, Search, ChevronRight, Mountain, Info, CheckCircle, Heart, Map } from 'lucide-react';
 
 export default function TurakPage() {
   const [turak, setTurak] = useState<any[]>([]);
@@ -31,18 +31,43 @@ export default function TurakPage() {
     "Szalajka-völgy séta": "szalajka",
     "Nagy-Eged hegy": "nagyeged",
     "Csóványos kilátó": "csovanyos",
-    "Megyer-hegyi Tengerszem": "megyerhegyi", // Ha más a neve, itt írd át!
+    "Megyer-hegyi Tengerszem": "megyerhegyi",
     "Hollókő vár túra": "holloko",
     "Bakony: Cuha-völgy": "cuhavolgy",
     "Zengő csúcstúra": "zengo",
     "Velencei-hegység: Ingókövek": "velenceihegyseg"
   };
 
+  // Térkép URL-ek összerendelése a túrák nevével
+  const terkepMap: Record<string, string> = {
+    "Szent Anna-tó körüli séta": "https://www.google.com/maps/d/u/0/embed?mid=1BZvLVtYkCBUjFwEsr33_MQOLBoLp1U0&ehbc=2E312F&noprof=1",
+    "Gyilkos-tó és Békás-szoros": "https://www.google.com/maps/d/u/0/embed?mid=1PrqY-cw872JJkJtaiqOIsDzLI8yyPfA&ehbc=2E312F&noprof=1",
+    "Tordai-hasadék túra": "https://www.google.com/maps/d/u/0/embed?mid=1C0sVXBWca2SVh1LHIVz0Cka5yhUnsf8&ehbc=2E312F&noprof=1",
+    "Madarasi Hargita csúcstúra": "https://www.google.com/maps/d/u/0/embed?mid=1Tj5E_hUm4G8q1rEPTGPOmplNIL00mvs&ehbc=2E312F&noprof=1",
+    "Fogarasi-havasok: Bilea-tó": "https://www.google.com/maps/d/u/0/embed?mid=1WFUfq79nX4Diw3MQKZ7aKpgZsZXcPGo&ehbc=2E312F&noprof=1",
+    "Királykő-hegység gerinctúra": "https://www.google.com/maps/d/u/0/embed?mid=1tBvfzyvtM1AgCbtJ-aCiDQ-8XkXAhbc&ehbc=2E312F&noprof=1",
+    "Medve-barlang látogatás": "https://www.google.com/maps/d/u/0/embed?mid=1UaNIm0SYHOuh5zgUwrq7zR4P2987PVs&ehbc=2E312F&noprof=1",
+    "Torockó: Székelykő mászás": "https://www.google.com/maps/d/u/0/embed?mid=1FNQWkkODrIGphxvaATze559vICJoXAg&ehbc=2E312F&noprof=1",
+    "Parajdi Sóbánya és Sószoros": "https://www.google.com/maps/d/u/0/embed?mid=1xXqu4QfT2I5RMs2MLf6sb2sI3GZbClU&ehbc=2E312F&noprof=1",
+    "Kékes-tető csúcstámadás": "https://www.google.com/maps/d/u/0/embed?mid=12AbVFVMjU4vdNTcApnTXRTPgC9jjjxs&ehbc=2E312F&noprof=1",
+    "Rám-szakadék kaland": "https://www.google.com/maps/d/u/0/embed?mid=1pzOFFJ6PHPTB3SGJw3mzZSTLyNrSph8&ehbc=2E312F&noprof=1",
+    "Prédikálószék kilátó": "https://www.google.com/maps/d/u/0/embed?mid=1zK58b_zh7tfVyMmqAUI2ozDIDhFw_Kw&ehbc=2E312F&noprof=1",
+    "Badacsony bazaltorgonák": "https://www.google.com/maps/d/u/0/embed?mid=17f74QetLgsSwqjctIHFfVtNfy3tK-6Y&ehbc=2E312F&noprof=1",
+    "Dobogókő kilátás": "https://www.google.com/maps/d/u/0/embed?mid=1D-Z9HPIUArE1ObDyWH9FrpGRMA_sKdg&ehbc=2E312F&noprof=1",
+    "Szalajka-völgy séta": "https://www.google.com/maps/d/u/0/embed?mid=1eAxbiOFeE32s2aw_OUSLieN67ZGMUv8&ehbc=2E312F&noprof=1",
+    "Nagy-Eged hegy": "https://www.google.com/maps/d/u/0/embed?mid=1heaAiBhbnT3k_-7Sg_Vk7vKE-0g8dLI&ehbc=2E312F&noprof=1",
+    "Csóványos kilátó": "https://www.google.com/maps/d/u/0/embed?mid=1kqyjEuUN3vZoF6e4eVlMgnpJUjT88Ew&ehbc=2E312F&noprof=1",
+    "Megyer-hegyi Tengerszem": "https://www.google.com/maps/d/u/0/embed?mid=1AWo8YTH9Idcsi8NrPh6tOiMOSbV6yCE&ehbc=2E312F&noprof=1",
+    "Hollókő vár túra": "https://www.google.com/maps/d/u/0/embed?mid=1r4xzlfVXtOtf0kRmaxG2zXUy0K4zNLs&ehbc=2E312F&noprof=1",
+    "Bakony: Cuha-völgy": "https://www.google.com/maps/d/u/0/embed?mid=1qOGNwrLjyH0GdcQnsJJkcMrSwnCJKjU&ehbc=2E312F&noprof=1",
+    "Zengő csúcstúra": "https://www.google.com/maps/d/u/0/embed?mid=1BrjcTWY8ZwUVNQZ-4BHzMhSpIHd47MY&ehbc=2E312F&noprof=1",
+    "Velencei-hegység: Ingókövek": "https://www.google.com/maps/d/u/0/embed?mid=1xiPimu9ZKLK3K-SAhgBc6X3daXbLn9c&ehbc=2E312F&noprof=1"
+  };
+
   const getKepNev = (turaNev: string): string => {
-    if (!turaNev) return "slideshow1"; // Alapértelmezett kép, ha nincs név
+    if (!turaNev) return "slideshow1";
     if (kepMap[turaNev]) return kepMap[turaNev];
 
-    // Ha véletlen nincs a szótárban, megpróbálja kitalálni
     return turaNev
       .toLowerCase()
       .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -172,35 +197,57 @@ export default function TurakPage() {
               </div>
             </div>
 
-            {/* Részletek képpel */}
+            {/* Részletek képpel, leírással és térképpel */}
             {nyitottId === t.id && (
-              <div className="mx-4 p-8 bg-white border-x border-b border-green-100 rounded-b-[2.5rem] -mt-8 pt-12 shadow-inner grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8 animate-in slide-in-from-top-4 duration-300">
+              <div className="mx-4 p-8 bg-white border-x border-b border-green-100 rounded-b-[2.5rem] -mt-8 pt-12 shadow-inner flex flex-col gap-8 animate-in slide-in-from-top-4 duration-300">
                 
-                {/* Bal oldali kép szekció javított error kezeléssel */}
-                <div className="w-full h-48 md:h-full rounded-3xl overflow-hidden border-4 border-white shadow-lg bg-gray-100 flex items-center justify-center">
-                  <img 
-                    src={`/images/${getKepNev(t.nev)}.jpg`} 
-                    alt={t.nev}
-                    className="w-full h-full object-cover object-center"
-                    onError={(e: any) => {
-                      e.target.onerror = null; // Végtelen ciklus megakadályozása
-                      e.target.src = "/images/slideshow1.jpg"; // Biztonsági tartalék kép
-                    }}
-                  />
+                {/* Felső rész: Kép és infók */}
+                <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
+                  {/* Kép szekció */}
+                  <div className="w-full h-48 md:h-full rounded-3xl overflow-hidden border-4 border-white shadow-lg bg-gray-100 flex items-center justify-center">
+                    <img 
+                      src={`/images/${getKepNev(t.nev)}.jpg`} 
+                      alt={t.nev}
+                      className="w-full h-full object-cover object-center"
+                      onError={(e: any) => {
+                        e.target.onerror = null;
+                        e.target.src = "/images/slideshow1.jpg";
+                      }}
+                    />
+                  </div>
+
+                  {/* Szöveges tartalom */}
+                  <div className="space-y-6">
+                    <div className="space-y-3 font-medium">
+                      <div className="flex items-center gap-2 text-green-600 font-black uppercase italic text-xs tracking-widest"><Info size={18} /> Leírás</div>
+                      <p className="text-gray-600 text-sm leading-relaxed">{t.leiras || "Nincs leírás megadva ehhez a túrához."}</p>
+                    </div>
+                    
+                    <div className="bg-green-50/50 p-6 rounded-3xl space-y-3 border border-green-100">
+                      <div className="flex items-center gap-2 text-green-700 font-black uppercase italic text-xs tracking-widest"><CheckCircle size={18} /> Kinek ajánljuk?</div>
+                      <p className="text-green-900/80 text-sm font-bold italic">{t.kinek_ajanljuk || "Mindenkinek, aki szereti a természetet!"}</p>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Jobb oldali szöveges tartalom */}
-                <div className="space-y-6">
-                  <div className="space-y-3 font-medium">
-                    <div className="flex items-center gap-2 text-green-600 font-black uppercase italic text-xs tracking-widest"><Info size={18} /> Leírás</div>
-                    <p className="text-gray-600 text-sm leading-relaxed">{t.leiras || "Nincs leírás megadva ehhez a túrához."}</p>
+                {/* Alsó rész: Google Térkép Iframe (Csak akkor jelenik meg, ha van hozzá URL a szótárban) */}
+                {terkepMap[t.nev] && (
+                  <div className="space-y-3 mt-4">
+                     <div className="flex items-center gap-2 text-green-600 font-black uppercase italic text-xs tracking-widest"><Map size={18} /> Útvonal / Helyszín</div>
+                     <div className="w-full h-[350px] rounded-[2rem] overflow-hidden border-4 border-white shadow-lg bg-green-50">
+                      <iframe 
+                        src={terkepMap[t.nev]}
+                        width="100%" 
+                        height="100%" 
+                        style={{ border: 0 }} 
+                        allowFullScreen 
+                        loading="lazy" 
+                        referrerPolicy="no-referrer-when-downgrade"
+                      ></iframe>
+                    </div>
                   </div>
-                  
-                  <div className="bg-green-50/50 p-6 rounded-3xl space-y-3 border border-green-100">
-                    <div className="flex items-center gap-2 text-green-700 font-black uppercase italic text-xs tracking-widest"><CheckCircle size={18} /> Kinek ajánljuk?</div>
-                    <p className="text-green-900/80 text-sm font-bold italic">{t.kinek_ajanljuk || "Mindenkinek, aki szereti a természetet!"}</p>
-                  </div>
-                </div>
+                )}
+
               </div>
             )}
           </div>
