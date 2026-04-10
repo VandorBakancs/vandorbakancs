@@ -142,117 +142,146 @@ export default function TurakPage() {
   };
 
   return (
-    <main className="min-h-screen p-10 max-w-5xl w-full mx-auto bg-[#f0fdf4]">
-      <div className="mb-10">
-        <h1 className="text-4xl font-black text-green-900 uppercase italic tracking-tighter">Túrák</h1>
-      </div>
-
-      {/* Szűrő rész */}
-      <div className="bg-white p-6 rounded-[2.5rem] border border-green-100 shadow-sm mb-8 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-green-600" size={18} />
-          <input onChange={(e) => setKeresoNev(e.target.value)} type="text" placeholder="Keresés..." className="w-full pl-12 pr-4 py-3 rounded-2xl border border-green-50 bg-green-50/50 outline-none focus:ring-2 focus:ring-green-400 font-bold text-sm text-gray-800 placeholder:text-green-300" />
+    <div className="min-h-screen bg-background transition-colors duration-300">
+      <main className="p-6 md:p-10 max-w-5xl w-full mx-auto">
+        <div className="mb-10">
+          <h1 className="text-3xl md:text-4xl font-black text-green-900 dark:text-green-400 uppercase italic tracking-tighter">Túrák</h1>
         </div>
-        <select onChange={(e) => setSzuroHelyszin(e.target.value)} className="w-full p-3 rounded-2xl border border-green-50 bg-green-50/50 font-bold text-sm text-gray-800 outline-none cursor-pointer">
-          <option value="">Összes helyszín</option>
-          {egyediHelyszinek.map((h: any, i) => <option key={i} value={h}>{h}</option>)}
-        </select>
-        <select onChange={(e) => setSzuroNehezseg(e.target.value)} className="w-full p-3 rounded-2xl border border-green-50 bg-green-50/50 font-bold text-sm text-gray-800 outline-none cursor-pointer">
-          <option value="">Összes nehézség</option>
-          {egyediNehezsegek.map((n: any, i) => <option key={i} value={n}>{n}</option>)}
-        </select>
-        <select onChange={(e) => setSzuroIdotartam(e.target.value)} className="w-full p-3 rounded-2xl border border-green-50 bg-green-50/50 font-bold text-sm text-gray-800 outline-none cursor-pointer">
-          <option value="">Összes időtartam</option>
-          {egyediIdotartamok.map((id: any, i) => <option key={i} value={id}>{id}</option>)}
-        </select>
-      </div>
 
-      {/* Túra lista */}
-      <div className="grid gap-6">
-        {hiba ? (
-          <div className="text-center p-10 bg-red-50 rounded-3xl text-red-600 font-bold border border-red-100">Hiba történt a túrák betöltésekor. Kérlek próbáld újra később!</div>
-        ) : szurtTurak.map((t: any) => (
-          <div key={t.id} className="flex flex-col gap-2">
-            <div 
-              onClick={() => setNyitottId(nyitottId === t.id ? null : t.id)} 
-              className={`bg-white p-6 rounded-[2.5rem] border transition-all duration-300 cursor-pointer flex justify-between items-center shadow-sm hover:border-green-300 ${nyitottId === t.id ? 'border-green-500 shadow-md' : 'border-green-100'}`}
-            >
-              <div className="flex items-center gap-6">
-                <div className={`w-14 h-14 rounded-2xl transition-colors flex items-center justify-center ${nyitottId === t.id ? 'bg-green-600 text-white' : 'bg-green-50 text-green-600'}`}>
-                  <Mountain size={24} />
-                </div>
-                <div>
-                  <h3 className="font-black text-green-900 text-xl uppercase italic tracking-tight">{t.nev}</h3>
-                  <div className="flex flex-wrap gap-4 text-[10px] font-black text-green-600/70 uppercase mt-1 tracking-widest">
-                    <span className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg"><MapPin size={12}/> {t.helyszin}</span>
-                    <span className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg"><Clock size={12}/> {t.idotartam}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <button onClick={(e) => toggleKedvenc(e, t.id)} className={`p-3 rounded-full transition-all duration-300 ${kedvencek.includes(t.id) ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'text-gray-300 hover:text-red-400 hover:bg-gray-50'}`}>
-                  <Heart size={24} fill={kedvencek.includes(t.id) ? "currentColor" : "none"} />
-                </button>
-                <ChevronRight className={`text-green-300 transition-all duration-300 ${nyitottId === t.id ? 'rotate-90 text-green-600' : ''}`} size={28} />
-              </div>
-            </div>
-
-            {/* Részletek képpel, leírással és térképpel */}
-            {nyitottId === t.id && (
-              <div className="mx-4 p-8 bg-white border-x border-b border-green-100 rounded-b-[2.5rem] -mt-8 pt-12 shadow-inner flex flex-col gap-8 animate-in slide-in-from-top-4 duration-300">
-                
-                {/* Felső rész: Kép és infók */}
-                <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
-                  {/* Kép szekció */}
-                  <div className="w-full h-48 md:h-full rounded-3xl overflow-hidden border-4 border-white shadow-lg bg-gray-100 flex items-center justify-center">
-                    <img 
-                      src={`/images/${getKepNev(t.nev)}.jpg`} 
-                      alt={t.nev}
-                      className="w-full h-full object-cover object-center"
-                      onError={(e: any) => {
-                        e.target.onerror = null;
-                        e.target.src = "/images/slideshow1.jpg";
-                      }}
-                    />
-                  </div>
-
-                  {/* Szöveges tartalom */}
-                  <div className="space-y-6">
-                    <div className="space-y-3 font-medium">
-                      <div className="flex items-center gap-2 text-green-600 font-black uppercase italic text-xs tracking-widest"><Info size={18} /> Leírás</div>
-                      <p className="text-gray-600 text-sm leading-relaxed">{t.leiras || "Nincs leírás megadva ehhez a túrához."}</p>
-                    </div>
-                    
-                    <div className="bg-green-50/50 p-6 rounded-3xl space-y-3 border border-green-100">
-                      <div className="flex items-center gap-2 text-green-700 font-black uppercase italic text-xs tracking-widest"><CheckCircle size={18} /> Kinek ajánljuk?</div>
-                      <p className="text-green-900/80 text-sm font-bold italic">{t.kinek_ajanljuk || "Mindenkinek, aki szereti a természetet!"}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Alsó rész: Google Térkép Iframe (Csak akkor jelenik meg, ha van hozzá URL a szótárban) */}
-                {terkepMap[t.nev] && (
-                  <div className="space-y-3 mt-4">
-                     <div className="flex items-center gap-2 text-green-600 font-black uppercase italic text-xs tracking-widest"><Map size={18} /> Útvonal / Helyszín</div>
-                     <div className="w-full h-[350px] rounded-[2rem] overflow-hidden border-4 border-white shadow-lg bg-green-50">
-                      <iframe 
-                        src={terkepMap[t.nev]}
-                        width="100%" 
-                        height="100%" 
-                        style={{ border: 0 }} 
-                        allowFullScreen 
-                        loading="lazy" 
-                        referrerPolicy="no-referrer-when-downgrade"
-                      ></iframe>
-                    </div>
-                  </div>
-                )}
-
-              </div>
-            )}
+        {/* Szűrő rész */}
+        <div className="bg-card p-6 rounded-[2.5rem] border border-card-border shadow-sm mb-8 grid grid-cols-1 md:grid-cols-4 gap-4 items-center transition-colors duration-300">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-green-600 dark:text-green-500" size={18} />
+            <input 
+              onChange={(e) => setKeresoNev(e.target.value)} 
+              type="text" 
+              placeholder="Keresés..." 
+              className="w-full pl-12 pr-4 py-3 rounded-2xl border border-card-border bg-background outline-none focus:ring-2 focus:ring-green-400 font-bold text-sm text-foreground placeholder:text-text-muted transition-colors" 
+            />
           </div>
-        ))}
-      </div>
-    </main>
+          <select 
+            onChange={(e) => setSzuroHelyszin(e.target.value)} 
+            className="w-full p-3 rounded-2xl border border-card-border bg-background font-bold text-sm text-foreground outline-none cursor-pointer transition-colors"
+          >
+            <option value="">Összes helyszín</option>
+            {egyediHelyszinek.map((h: any, i) => <option key={i} value={h}>{h}</option>)}
+          </select>
+          <select 
+            onChange={(e) => setSzuroNehezseg(e.target.value)} 
+            className="w-full p-3 rounded-2xl border border-card-border bg-background font-bold text-sm text-foreground outline-none cursor-pointer transition-colors"
+          >
+            <option value="">Összes nehézség</option>
+            {egyediNehezsegek.map((n: any, i) => <option key={i} value={n}>{n}</option>)}
+          </select>
+          <select 
+            onChange={(e) => setSzuroIdotartam(e.target.value)} 
+            className="w-full p-3 rounded-2xl border border-card-border bg-background font-bold text-sm text-foreground outline-none cursor-pointer transition-colors"
+          >
+            <option value="">Összes időtartam</option>
+            {egyediIdotartamok.map((id: any, i) => <option key={i} value={id}>{id}</option>)}
+          </select>
+        </div>
+
+        {/* Túra lista */}
+        <div className="grid gap-6">
+          {hiba ? (
+            <div className="text-center p-10 bg-red-50 dark:bg-red-900/20 rounded-3xl text-red-600 dark:text-red-400 font-bold border border-red-100 dark:border-red-900/30 transition-colors">
+              Hiba történt a túrák betöltésekor. Kérlek próbáld újra később!
+            </div>
+          ) : szurtTurak.map((t: any) => (
+            <div key={t.id} className="flex flex-col gap-2 relative">
+              <div 
+                onClick={() => setNyitottId(nyitottId === t.id ? null : t.id)} 
+                className={`bg-card p-6 rounded-[2.5rem] border transition-all duration-300 cursor-pointer flex justify-between items-center shadow-sm hover:border-green-500 z-10 ${
+                  nyitottId === t.id ? 'border-green-500 shadow-md' : 'border-card-border'
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+                  <div className={`w-14 h-14 rounded-2xl transition-colors flex shrink-0 items-center justify-center ${
+                    nyitottId === t.id ? 'bg-green-600 text-white' : 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-500'
+                  }`}>
+                    <Mountain size={24} />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-green-900 dark:text-green-400 text-xl uppercase italic tracking-tight">{t.nev}</h3>
+                    <div className="flex flex-wrap gap-2 sm:gap-4 text-[10px] font-black text-green-700 dark:text-green-500 uppercase mt-2 tracking-widest">
+                      <span className="flex items-center gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg transition-colors"><MapPin size={12}/> {t.helyszin}</span>
+                      <span className="flex items-center gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg transition-colors"><Clock size={12}/> {t.idotartam}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 sm:gap-4 shrink-0 ml-4">
+                  <button 
+                    onClick={(e) => toggleKedvenc(e, t.id)} 
+                    className={`p-3 rounded-full transition-all duration-300 ${
+                      kedvencek.includes(t.id) 
+                      ? 'bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/40' 
+                      : 'text-gray-300 dark:text-zinc-600 hover:text-red-400 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                    }`}
+                  >
+                    <Heart size={24} fill={kedvencek.includes(t.id) ? "currentColor" : "none"} />
+                  </button>
+                  <ChevronRight className={`text-green-300 dark:text-green-700/50 transition-all duration-300 ${nyitottId === t.id ? 'rotate-90 text-green-600 dark:text-green-500' : ''}`} size={28} />
+                </div>
+              </div>
+
+              {/* Részletek képpel, leírással és térképpel */}
+              {nyitottId === t.id && (
+                <div className="mx-4 p-6 md:p-8 bg-card border-x border-b border-card-border rounded-b-[2.5rem] -mt-8 pt-12 shadow-inner flex flex-col gap-8 animate-in slide-in-from-top-4 duration-300 relative z-0">
+                  
+                  {/* Felső rész: Kép és infók */}
+                  <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
+                    {/* Kép szekció */}
+                    <div className="w-full h-48 md:h-full rounded-3xl overflow-hidden border-4 border-white dark:border-zinc-800 shadow-lg bg-background flex items-center justify-center transition-colors">
+                      <img 
+                        src={`/images/${getKepNev(t.nev)}.jpg`} 
+                        alt={t.nev}
+                        className="w-full h-full object-cover object-center"
+                        onError={(e: any) => {
+                          e.target.onerror = null;
+                          e.target.src = "/images/slideshow1.jpg";
+                        }}
+                      />
+                    </div>
+
+                    {/* Szöveges tartalom */}
+                    <div className="space-y-6">
+                      <div className="space-y-3 font-medium">
+                        <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-black uppercase italic text-xs tracking-widest"><Info size={18} /> Leírás</div>
+                        <p className="text-text-muted text-sm leading-relaxed">{t.leiras || "Nincs leírás megadva ehhez a túrához."}</p>
+                      </div>
+                      
+                      <div className="bg-green-50/50 dark:bg-green-900/10 p-6 rounded-3xl space-y-3 border border-card-border transition-colors">
+                        <div className="flex items-center gap-2 text-green-700 dark:text-green-500 font-black uppercase italic text-xs tracking-widest"><CheckCircle size={18} /> Kinek ajánljuk?</div>
+                        <p className="text-green-900/80 dark:text-green-300/80 text-sm font-bold italic">{t.kinek_ajanljuk || "Mindenkinek, aki szereti a természetet!"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Alsó rész: Google Térkép Iframe (Csak akkor jelenik meg, ha van hozzá URL a szótárban) */}
+                  {terkepMap[t.nev] && (
+                    <div className="space-y-3 mt-4">
+                       <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-black uppercase italic text-xs tracking-widest"><Map size={18} /> Útvonal / Helyszín</div>
+                       <div className="w-full h-[350px] rounded-[2rem] overflow-hidden border-4 border-white dark:border-zinc-800 shadow-lg bg-background transition-colors">
+                        <iframe 
+                          src={terkepMap[t.nev]}
+                          width="100%" 
+                          height="100%" 
+                          style={{ border: 0 }} 
+                          allowFullScreen 
+                          loading="lazy" 
+                          referrerPolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
   );
 }

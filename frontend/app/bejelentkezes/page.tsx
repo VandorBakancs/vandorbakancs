@@ -50,42 +50,41 @@ export default function LoginPage() {
     };
 
     return (
-        //sötét módban a képernyő hattere sötétszürke lesz (dark:bg-zinc-900)
-        <div className="min-h-screen bg-[#f0fdf4] dark:bg-zinc-900 flex items-center justify-center p-6 transition-colors duration-300">
-            <div className="bg-white dark:bg-zinc-800 w-full max-w-md p-10 rounded-[3.5rem] shadow-2xl border border-green-50 dark:border-zinc-700 transition-colors duration-300">
+        <div className="min-h-screen bg-background flex items-center justify-center p-6 transition-colors duration-300">
+            <div className="bg-card w-full max-w-md p-10 rounded-[3.5rem] shadow-2xl border border-card-border transition-colors duration-300">
                 <div className="text-center mb-10">
-                    <div className="inline-block p-4 bg-green-50 dark:bg-zinc-700 rounded-3xl text-green-600 dark:text-green-400 mb-4 transition-colors">
+                    <div className="inline-block p-4 bg-green-50 dark:bg-green-900/20 rounded-3xl text-green-600 dark:text-green-500 mb-4 transition-colors">
                         <Mountain size={48}/>
                     </div>
-                    <h1 className="text-3xl font-black text-green-900 dark:text-white uppercase italic">Bejelentkezés</h1>
+                    <h1 className="text-3xl font-black text-green-900 dark:text-green-400 uppercase italic transition-colors">Bejelentkezés</h1>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {error && (
-                        <p className="text-red-500 font-bold bg-red-50 dark:bg-red-900/30 p-3 rounded-2xl text-center text-sm">
+                        <p className="text-red-500 font-bold bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-900/30 p-3 rounded-2xl text-center text-sm transition-colors">
                             {error}
                         </p>
                     )}
 
                     <div className="relative">
-                        <Mail className="absolute left-4 top-5 text-green-600 dark:text-green-400" size={20}/>
+                        <Mail className="absolute left-4 top-5 text-green-600 dark:text-green-500" size={20}/>
                         <input 
                             type="email" 
                             placeholder="Email cím" 
                             required
-                            className="w-full p-5 pl-12 rounded-2xl bg-green-50 dark:bg-zinc-700 border-none outline-none font-bold text-gray-900 dark:text-white placeholder:text-green-800/40 dark:placeholder:text-gray-400 transition-colors"
+                            className="w-full p-5 pl-12 rounded-2xl bg-background border border-card-border outline-none focus:ring-2 focus:ring-green-400 font-bold text-foreground placeholder:text-text-muted transition-colors"
                             value={formData.email}
                             onChange={(e) => setFormData({...formData, email: e.target.value})}
                         />
                     </div>
 
                     <div className="relative">
-                        <Lock className="absolute left-4 top-5 text-green-600 dark:text-green-400" size={20}/>
+                        <Lock className="absolute left-4 top-5 text-green-600 dark:text-green-500" size={20}/>
                         <input 
                             type="password" 
                             placeholder="Jelszó" 
                             required
-                            className="w-full p-5 pl-12 rounded-2xl bg-green-50 dark:bg-zinc-700 border-none outline-none font-bold text-gray-900 dark:text-white placeholder:text-green-800/40 dark:placeholder:text-gray-400 transition-colors"
+                            className="w-full p-5 pl-12 rounded-2xl bg-background border border-card-border outline-none focus:ring-2 focus:ring-green-400 font-bold text-foreground placeholder:text-text-muted transition-colors"
                             value={formData.password}
                             onChange={(e) => setFormData({...formData, password: e.target.value})}
                         />
@@ -94,7 +93,7 @@ export default function LoginPage() {
                     <button 
                         type="submit" 
                         disabled={loading}
-                        className={`w-full ${loading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600'} text-white p-5 rounded-2xl font-black uppercase shadow-lg transition-all flex items-center justify-center gap-2`}
+                        className={`w-full ${loading ? 'bg-gray-400 dark:bg-zinc-600 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600'} text-white p-5 rounded-2xl font-black uppercase shadow-lg transition-all flex items-center justify-center gap-2`}
                     >
                         {loading ? 'Folyamatban...' : (
                             <>Belépés <LogIn size={20} /></>
@@ -103,8 +102,8 @@ export default function LoginPage() {
                 </form>
 
                 <div className="mt-8 text-center">
-                    <p className="text-green-800/40 dark:text-gray-400 font-bold text-sm">
-                        Még nincs fiókod? <Link href="/regisztracio" className="text-green-600 dark:text-green-400 underline">Hozz létre egyet!</Link>
+                    <p className="text-text-muted font-bold text-sm transition-colors">
+                        Még nincs fiókod? <Link href="/regisztracio" className="text-green-600 dark:text-green-500 underline hover:text-green-700 dark:hover:text-green-400 transition-colors">Hozz létre egyet!</Link>
                     </p>
                 </div>
             </div>
