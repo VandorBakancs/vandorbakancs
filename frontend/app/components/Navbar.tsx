@@ -53,7 +53,7 @@ export default function Navbar() {
           <Mountain size={22} />
         </div>
         <span className="text-green-900 dark:text-white font-black uppercase italic tracking-tighter text-lg">
-          Vándor Bakancs
+          Zöldösvény
         </span>
       </Link>
 

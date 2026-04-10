@@ -3,7 +3,7 @@ const { sql, poolPromise } = require('../dbconfig');
 const router = express.Router();
 
 // ==========================================
-// KEDVENCEK FUNKCIÓK (Új szakasz)
+// KEDVENCEK FUNKCIÓK 
 // ==========================================
 
 // Egy adott felhasználó kedvenceinek lekérése

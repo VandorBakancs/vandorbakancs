@@ -3,7 +3,7 @@ const { sql, poolPromise } = require('../dbconfig');
 const router = express.Router();
 
 // ==========================================
-// 1. BEJELENTKEZÉS (Sima szöveges jelszóval)
+// 1. BEJELENTKEZÉS 
 // ==========================================
 router.post('/login', async (req, res) => {
     try {
@@ -38,7 +38,7 @@ router.post('/login', async (req, res) => {
 });
 
 // ==========================================
-// 2. REGISZTRÁCIÓ (Sima szöveges jelszóval)
+// 2. REGISZTRÁCIÓ 
 // ==========================================
 router.post('/register', async (req, res) => {
     try {

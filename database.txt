@@ -1,7 +1,7 @@
 USE master;
 GO
 
--- Biztos, ami biztos: ha mégis maradt volna valami a régi adatbázisból, kilőjük
+--biztos, ami biztosha mégis maradt volna valami a régi adatbázisból, kilőjük
 IF DB_ID('VandorBakancsDb') IS NOT NULL
 BEGIN
     ALTER DATABASE VandorBakancsDb SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
