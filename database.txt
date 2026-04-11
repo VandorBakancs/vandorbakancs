@@ -1,7 +1,7 @@
 USE master;
 GO
 
---biztos, ami biztosha mégis maradt volna valami a régi adatbázisból, kilőjük
+-- Biztos, ami biztos: ha mégis maradt volna valami a régi adatbázisból, kilőjük
 IF DB_ID('VandorBakancsDb') IS NOT NULL
 BEGIN
     ALTER DATABASE VandorBakancsDb SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
@@ -38,7 +38,7 @@ CREATE TABLE Turak (
     kinek_ajanljuk nvarchar(MAX) NULL
 );
 
--- Fórum Témák tábla (Itt már user_id van a szerzo helyett)
+-- Fórum Témák tábla 
 CREATE TABLE ForumTemak (
     id int IDENTITY(1,1) PRIMARY KEY,
     cim nvarchar(255) NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE ForumTemak (
     CONSTRAINT FK_ForumTemak_Users FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
 );
 
--- Fórum Kommentek tábla (Itt is user_id van a szerzo helyett)
+-- Fórum Kommentek tábla 
 CREATE TABLE ForumKommentek (
     id int IDENTITY(1,1) PRIMARY KEY,
     tema_id int NOT NULL,
@@ -56,6 +56,17 @@ CREATE TABLE ForumKommentek (
     datum datetime DEFAULT GETDATE(),
     CONSTRAINT FK_Komment_Tema FOREIGN KEY (tema_id) REFERENCES ForumTemak(id) ON DELETE CASCADE,
     CONSTRAINT FK_Komment_User FOREIGN KEY (user_id) REFERENCES Users(id)
+);
+
+-- Fórum Téma Lájk tábla (Kapcsolótábla a szívezéshez)
+CREATE TABLE TemaLikes (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    tema_id INT NOT NULL,
+    user_id INT NOT NULL,
+    datum DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_Like_Tema FOREIGN KEY (tema_id) REFERENCES ForumTemak(id) ON DELETE CASCADE,
+    CONSTRAINT FK_Like_User FOREIGN KEY (user_id) REFERENCES Users(id),
+    CONSTRAINT UC_UserTemaLike UNIQUE (tema_id, user_id)
 );
 
 -- Kedvenc Túrák tábla
@@ -104,7 +115,7 @@ INSERT INTO Turak (nev, helyszin, idotartam, nehezseg, leiras, kinek_ajanljuk) V
 ('Zengő csúcstúra', 'Mecsek', '3.5 óra', 'Közepes', 'A Mecsek legmagasabb csúcsa új kilátóval.', 'Baranyai túrázóknak.'),
 ('Velencei-hegység: Ingókövek', 'Pákozd', '2.5 óra', 'Könnyű', 'Különleges gránit sziklaalakzatok, amik dacolnak a gravitációval.', 'Geológiai érdekességeket keresőknek.');
 
--- Fórum témák (1 = Admin, 2 = Teszt Elek)
+-- Fórum témák 
 INSERT INTO ForumTemak (cim, user_id) VALUES 
 ('Túrafelszerelés kezdőknek', 1),
 ('Erdélyi túrák tapasztalatok', 2),
@@ -117,4 +128,10 @@ INSERT INTO ForumKommentek (tema_id, user_id, szoveg) VALUES
 
 -- Kedvencek teszt adat
 INSERT INTO KedvencTurak (user_id, tura_id) VALUES (1, 1);
+
+-- Fórum Téma Lájkok teszt adat
+INSERT INTO TemaLikes (tema_id, user_id) VALUES 
+(1, 1), 
+(2, 1), 
+(1, 2); 
 GO
