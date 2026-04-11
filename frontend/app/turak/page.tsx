@@ -14,7 +14,7 @@ export default function TurakPage() {
   // Pontos összerendelés a túra neve és a képfájl neve között
   const kepMap: Record<string, string> = {
     "Szent Anna-tó körüli séta": "szentannato",
-    "Gyilkos-tó és Békás-szoros": "gyilkosto",
+    "Gyilkos-tó és Békás-szoros": "gyilkosto", // Frissítve a gyilkosto.jpg-hez
     "Tordai-hasadék túra": "tordaihasadek",
     "Madarasi Hargita csúcstúra": "madarasi",
     "Fogarasi-havasok: Bilea-tó": "bileato",
@@ -31,7 +31,7 @@ export default function TurakPage() {
     "Szalajka-völgy séta": "szalajka",
     "Nagy-Eged hegy": "nagyeged",
     "Csóványos kilátó": "csovanyos",
-    "Megyer-hegyi Tengerszem": "megyerhegyi",
+    "Megyer-hegyi Tengerszem": "tengerszem", // Frissítve a tengerszem.jpg-hez
     "Hollókő vár túra": "holloko",
     "Bakony: Cuha-völgy": "cuhavolgy",
     "Zengő csúcstúra": "zengo",

@@ -28,15 +28,19 @@ export default function HomePage() {
           {topImages.map((image, index) => (
             <div
               key={index}
-              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                index === currentIndex ? "opacity-100 z-10 scale-105" : "opacity-0 z-0 scale-100"
+              // Itt csak az áttűnést (opacity) kezeljük
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
               }`}
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-10" />
               <img
                 src={image.src}
                 alt={image.alt}
-                className="absolute inset-0 w-full h-full object-cover object-center" 
+                // Itt történik a lassú kizoomolás 110%-ról 100%-ra
+                className={`absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[6000ms] ease-out ${
+                  index === currentIndex ? "scale-100" : "scale-110"
+                }`} 
                 onError={(e: any) => {
                   // Ha nem találja a .jpg kiterjesztést, automatikusan megpróbálja .png-vel betölteni
                   if (e.target.src.includes('.jpg')) {
