@@ -84,7 +84,6 @@ CREATE TABLE KedvencTurak (
     CONSTRAINT UC_UserTura UNIQUE (user_id, tura_id)
 );
 
--- ITT A JAVÍTOTT GALÉRIA TÁBLA!
 CREATE TABLE TuraKepek (
     id int IDENTITY(1,1) PRIMARY KEY,
     tura_id int NOT NULL,
@@ -117,6 +116,7 @@ VALUES
 ('Teszt Elek', 'teszt@gmail.com', 'teszt123', 'user');
 
 INSERT INTO Turak (nev, helyszin, idotartam, nehezseg, leiras, kinek_ajanljuk) VALUES 
+('Egyéb / Off-topic', 'Bárhol', '-', '-', 'Ide töltheted fel azokat a képeket, amelyek nem kapcsolódnak konkrét túrához.', 'Mindenkinek'),
 ('Szent Anna-tó körüli séta', 'Erdély - Hargita', '2 óra', 'Könnyű', 'A Szent Anna-tó Közép-Kelet-Európa egyetlen épen maradt vulkáni krátertava. A séta során megismerhetjük a tó legendáját és élvezhetjük a kristálytiszta levegőt.', 'Tökéletes választás családoknak és azoknak, akik egy könnyed sétára vágynak festői környezetben.'),
 ('Gyilkos-tó és Békás-szoros', 'Erdély - Gyergyó', '4 óra', 'Közepes', 'A Gyilkos-tó egy természetes torlasz-tó, melynek különlegessége a vízből kiálló fenyőcsonkok. A Békás-szoros pedig Európa egyik leglátványosabb szurdokvölgye.', 'Természetkedvelőknek és fotósoknak, akik nem riadnak vissza egy kis szintkülönbségtől.'),
 ('Tordai-hasadék túra', 'Erdély - Aranyosszék', '3 óra', 'Közepes', 'Hatalmas sziklafalak között kanyargó ösvény a Hesdát-patak mentén. Függőhidak és látványos barlangnyílások teszik izgalmassá.', 'Kalandvágyóknak és geológia iránt érdeklődőknek.'),
