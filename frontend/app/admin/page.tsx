@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mountain, Trash2, LogOut, Plus, MapPin, X, MessageSquare, MessageCircle } from 'lucide-react';
+import { Mountain, Trash2, LogOut, Plus, MapPin, X, MessageSquare, MessageCircle, Camera } from 'lucide-react';
 
 interface User {
     nev: string;
@@ -13,6 +13,7 @@ export default function AdminPage() {
     const [temak, setTemak] = useState<any[]>([]); 
     const [valasztottTemaKommentjei, setValasztottTemaKommentjei] = useState<any[]>([]); 
     const [aktivTemaId, setAktivTemaId] = useState<number | null>(null); 
+    const [kepek, setKepek] = useState<any[]>([]);
 
     const [user, setUser] = useState<User | null>(null);
     const [showModal, setShowModal] = useState(false);
@@ -27,12 +28,16 @@ export default function AdminPage() {
             setUser(loggedInUser);
             fetchTurak();
             fetchTemak(); 
+            fetchKepek(); 
         }
     }, [router]);
+
+    // --- ADATOK LEKÉRÉSE ---
 
     const fetchTurak = async () => {
         try {
             const res = await fetch('http://localhost:5000/api/turak');
+            if (!res.ok) return console.error("Hiba a túrák lekérésekor");
             const result = await res.json();
             if (result.success) setTurak(result.data);
         } catch (e) {
@@ -40,40 +45,10 @@ export default function AdminPage() {
         }
     };
 
-    const addTura = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const res = await fetch('http://localhost:5000/api/turak', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newTura)
-            });
-            const result = await res.json();
-            if (result.success) {
-                setShowModal(false);
-                setNewTura({ nev: '', helyszin: '', idotartam: '', nehezseg: '' });
-                fetchTurak();
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    };
-
-    const deleteTura = async (id: number) => {
-        if (confirm("Biztosan törlöd a túrát?")) {
-            try {
-                const res = await fetch(`http://localhost:5000/api/turak/${id}`, { method: 'DELETE' });
-                const result = await res.json();
-                if (result.success) fetchTurak();
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    };
-
     const fetchTemak = async () => {
         try {
             const res = await fetch('http://localhost:5000/api/forum/temak');
+            if (!res.ok) return console.error("Hiba a témák lekérésekor");
             const result = await res.json();
             if (result.success) setTemak(result.data);
         } catch (e) {
@@ -84,6 +59,7 @@ export default function AdminPage() {
     const fetchKommentek = async (temaId: number) => {
         try {
             const res = await fetch(`http://localhost:5000/api/forum/kommentek/${temaId}`);
+            if (!res.ok) return console.error("Hiba a kommentek lekérésekor");
             const result = await res.json();
             if (result.success) {
                 setValasztottTemaKommentjei(result.data);
@@ -94,10 +70,37 @@ export default function AdminPage() {
         }
     };
 
+    const fetchKepek = async () => {
+        try {
+            const res = await fetch('http://localhost:5000/api/galeria');
+            if (!res.ok) return console.error("Hiba a galéria lekérésekor");
+            const result = await res.json();
+            if (result.success) setKepek(result.data);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    // --- TÖRLÉSI FUNKCIÓK ---
+
+    const deleteTura = async (id: number) => {
+        if (confirm("Biztosan törlöd a túrát?")) {
+            try {
+                const res = await fetch(`http://localhost:5000/api/turak/${id}`, { method: 'DELETE' });
+                if (!res.ok) return alert("Szerver hiba történt törléskor!");
+                const result = await res.json();
+                if (result.success) fetchTurak();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    };
+
     const deleteTema = async (id: number) => {
         if (confirm("Biztosan törlöd?")) {
             try {
                 const res = await fetch(`http://localhost:5000/api/forum/temak/${id}`, { method: 'DELETE' });
+                if (!res.ok) return alert("Szerver hiba történt törléskor!");
                 const result = await res.json();
                 if (result.success) {
                     fetchTemak();
@@ -114,11 +117,51 @@ export default function AdminPage() {
         if (confirm("Biztosan törlöd?")) {
             try {
                 const res = await fetch(`http://localhost:5000/api/forum/kommentek/${kommentId}`, { method: 'DELETE' });
+                if (!res.ok) return alert("Szerver hiba történt törléskor!");
                 const result = await res.json();
                 if (result.success && aktivTemaId) fetchKommentek(aktivTemaId);
             } catch (e) {
                 console.error(e);
             }
+        }
+    };
+
+    const deleteKep = async (kepId: number) => {
+        if (confirm("Biztosan törlöd ezt a képet? A fájl is véglegesen törlődik a szerverről!")) {
+            try {
+                const res = await fetch(`http://localhost:5000/api/galeria/${kepId}`, { method: 'DELETE' });
+                if (!res.ok) return alert("Szerver hiba: Lehet, hogy nem fut a backend?");
+                const result = await res.json();
+                if (result.success) {
+                    fetchKepek(); 
+                } else {
+                    alert("Hiba: " + result.error);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    };
+
+    // --- HOZZÁADÁS ---
+
+    const addTura = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const res = await fetch('http://localhost:5000/api/turak', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newTura)
+            });
+            if (!res.ok) return alert("Szerver hiba mentéskor!");
+            const result = await res.json();
+            if (result.success) {
+                setShowModal(false);
+                setNewTura({ nev: '', helyszin: '', idotartam: '', nehezseg: '' });
+                fetchTurak();
+            }
+        } catch (e) {
+            console.error(e);
         }
     };
 
@@ -139,6 +182,35 @@ export default function AdminPage() {
                     <button onClick={() => { localStorage.removeItem('user'); router.push('/bejelentkezes'); }} className="p-4 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-2xl transition-all flex items-center gap-2 font-bold">
                         Kijelentkezés <LogOut size={20}/>
                     </button>
+                </div>
+
+                {/* --- 🖼️ KÉPEK / GALÉRIA SZEKCIÓ --- */}
+                <div className="bg-card rounded-[3.5rem] shadow-2xl border border-card-border overflow-hidden transition-colors duration-300">
+                    <div className="p-8 bg-green-50/30 dark:bg-neutral-800/50 border-b border-card-border font-black text-green-900 dark:text-green-400 uppercase italic flex items-center justify-between">
+                        <span className="flex items-center gap-2"><Camera size={20} className="text-green-600 dark:text-green-500"/> Galéria Moderálása</span>
+                    </div>
+                    <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {kepek.length === 0 ? (
+                            <p className="col-span-full text-center font-bold text-gray-400 dark:text-neutral-500 italic">Nincsenek feltöltött képek.</p>
+                        ) : (
+                            kepek.map((k) => (
+                                <div key={k.id} className="flex items-center gap-4 p-4 bg-green-50/40 dark:bg-neutral-800 rounded-3xl hover:bg-green-50 dark:hover:bg-neutral-700 transition-all">
+                                    <img 
+                                        src={`http://localhost:5000${k.kep_url}`} 
+                                        alt={k.turaNev} 
+                                        className="w-16 h-16 object-cover rounded-2xl border-2 border-green-200 dark:border-neutral-600 shadow-sm"
+                                    />
+                                    <div className="flex-1 overflow-hidden">
+                                        <div className="font-bold text-sm text-foreground truncate">{k.feltolto}</div>
+                                        <div className="text-xs text-green-700/60 dark:text-green-500/60 truncate">{k.turaNev}</div>
+                                    </div>
+                                    <button onClick={() => deleteKep(k.id)} className="p-3 bg-card text-red-500 rounded-xl shadow-sm hover:bg-red-500 hover:text-white transition-all shrink-0">
+                                        <Trash2 size={18}/>
+                                    </button>
+                                </div>
+                            ))
+                        )}
+                    </div>
                 </div>
 
                 {/* --- 🏔️ TÚRÁK SZEKCIÓ --- */}

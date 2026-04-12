@@ -1,7 +1,9 @@
 USE master;
 GO
 
--- Biztos, ami biztos: ha mégis maradt volna valami a régi adatbázisból, kilőjük
+-- ==========================================
+-- 1. ADATBÁZIS ÚJRAHÚZÁSA (Tiszta lap)
+-- ==========================================
 IF DB_ID('VandorBakancsDb') IS NOT NULL
 BEGIN
     ALTER DATABASE VandorBakancsDb SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
@@ -9,16 +11,16 @@ BEGIN
 END
 GO
 
--- 1. ADATBÁZIS LÉTREHOZÁSA
 CREATE DATABASE VandorBakancsDb;
 GO
 
 USE VandorBakancsDb;
 GO
 
+-- ==========================================
 -- 2. TÁBLÁK LÉTREHOZÁSA
+-- ==========================================
 
--- Felhasználók tábla
 CREATE TABLE Users (
     id int IDENTITY(1,1) PRIMARY KEY,
     nev nvarchar(100) NOT NULL,
@@ -27,7 +29,6 @@ CREATE TABLE Users (
     role nvarchar(20) DEFAULT 'user'
 );
 
--- Túrák tábla
 CREATE TABLE Turak (
     id int IDENTITY(1,1) PRIMARY KEY,
     nev nvarchar(255) NOT NULL,
@@ -38,7 +39,13 @@ CREATE TABLE Turak (
     kinek_ajanljuk nvarchar(MAX) NULL
 );
 
--- Fórum Témák tábla 
+CREATE TABLE Jelvenyek (
+    id int IDENTITY(1,1) PRIMARY KEY,
+    nev nvarchar(100) NOT NULL,
+    leiras nvarchar(255) NOT NULL,
+    ikon nvarchar(50) NOT NULL 
+);
+
 CREATE TABLE ForumTemak (
     id int IDENTITY(1,1) PRIMARY KEY,
     cim nvarchar(255) NOT NULL,
@@ -47,7 +54,6 @@ CREATE TABLE ForumTemak (
     CONSTRAINT FK_ForumTemak_Users FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
 );
 
--- Fórum Kommentek tábla 
 CREATE TABLE ForumKommentek (
     id int IDENTITY(1,1) PRIMARY KEY,
     tema_id int NOT NULL,
@@ -58,7 +64,6 @@ CREATE TABLE ForumKommentek (
     CONSTRAINT FK_Komment_User FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 
--- Fórum Téma Lájk tábla (Kapcsolótábla a szívezéshez)
 CREATE TABLE TemaLikes (
     id INT IDENTITY(1,1) PRIMARY KEY,
     tema_id INT NOT NULL,
@@ -69,27 +74,48 @@ CREATE TABLE TemaLikes (
     CONSTRAINT UC_UserTemaLike UNIQUE (tema_id, user_id)
 );
 
--- Kedvenc Túrák tábla
 CREATE TABLE KedvencTurak (
     id INT IDENTITY(1,1) PRIMARY KEY,
     user_id INT NOT NULL,
     tura_id INT NOT NULL,
     datum DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
-    FOREIGN KEY (tura_id) REFERENCES Turak(id) ON DELETE CASCADE,
+    CONSTRAINT FK_Kedvenc_User FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
+    CONSTRAINT FK_Kedvenc_Tura FOREIGN KEY (tura_id) REFERENCES Turak(id) ON DELETE CASCADE,
     CONSTRAINT UC_UserTura UNIQUE (user_id, tura_id)
+);
+
+-- ITT A JAVÍTOTT GALÉRIA TÁBLA!
+CREATE TABLE TuraKepek (
+    id int IDENTITY(1,1) PRIMARY KEY,
+    tura_id int NOT NULL,
+    user_id int NOT NULL,
+    kep_url nvarchar(500) NOT NULL,
+    leiras nvarchar(255) NULL,
+    datum datetime DEFAULT GETDATE(),
+    CONSTRAINT FK_TuraKepek_Tura FOREIGN KEY (tura_id) REFERENCES Turak(id) ON DELETE CASCADE,
+    CONSTRAINT FK_TuraKepek_User FOREIGN KEY (user_id) REFERENCES Users(id)
+);
+
+CREATE TABLE UserJelvenyek (
+    id int IDENTITY(1,1) PRIMARY KEY,
+    user_id int NOT NULL,
+    jelveny_id int NOT NULL,
+    datum datetime DEFAULT GETDATE(),
+    CONSTRAINT FK_UserJelvenyek_User FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
+    CONSTRAINT FK_UserJelvenyek_Jelveny FOREIGN KEY (jelveny_id) REFERENCES Jelvenyek(id) ON DELETE CASCADE,
+    CONSTRAINT UC_UserJelveny UNIQUE (user_id, jelveny_id)
 );
 GO
 
--- 3. ADATOK FELTÖLTÉSE
+-- ==========================================
+-- 3. ADATOK FELTÖLTÉSE (Teszt adatok)
+-- ==========================================
 
--- Felhasználók
 INSERT INTO Users (nev, email, password, role) 
 VALUES 
 ('Adminisztrátor', 'admin@gmail.com', 'admin', 'admin'),
 ('Teszt Elek', 'teszt@gmail.com', 'teszt123', 'user');
 
--- ÖSSZES TÚRA (A teljes 23-as lista)
 INSERT INTO Turak (nev, helyszin, idotartam, nehezseg, leiras, kinek_ajanljuk) VALUES 
 ('Szent Anna-tó körüli séta', 'Erdély - Hargita', '2 óra', 'Könnyű', 'A Szent Anna-tó Közép-Kelet-Európa egyetlen épen maradt vulkáni krátertava. A séta során megismerhetjük a tó legendáját és élvezhetjük a kristálytiszta levegőt.', 'Tökéletes választás családoknak és azoknak, akik egy könnyed sétára vágynak festői környezetben.'),
 ('Gyilkos-tó és Békás-szoros', 'Erdély - Gyergyó', '4 óra', 'Közepes', 'A Gyilkos-tó egy természetes torlasz-tó, melynek különlegessége a vízből kiálló fenyőcsonkok. A Békás-szoros pedig Európa egyik leglátványosabb szurdokvölgye.', 'Természetkedvelőknek és fotósoknak, akik nem riadnak vissza egy kis szintkülönbségtől.'),
@@ -115,23 +141,26 @@ INSERT INTO Turak (nev, helyszin, idotartam, nehezseg, leiras, kinek_ajanljuk) V
 ('Zengő csúcstúra', 'Mecsek', '3.5 óra', 'Közepes', 'A Mecsek legmagasabb csúcsa új kilátóval.', 'Baranyai túrázóknak.'),
 ('Velencei-hegység: Ingókövek', 'Pákozd', '2.5 óra', 'Könnyű', 'Különleges gránit sziklaalakzatok, amik dacolnak a gravitációval.', 'Geológiai érdekességeket keresőknek.');
 
--- Fórum témák 
 INSERT INTO ForumTemak (cim, user_id) VALUES 
 ('Túrafelszerelés kezdőknek', 1),
 ('Erdélyi túrák tapasztalatok', 2),
 ('Hova menjünk a hétvégén?', 2);
 
--- Fórum kommentek
 INSERT INTO ForumKommentek (tema_id, user_id, szoveg) VALUES 
 (1, 2, 'Szerintem a legfontosabb egy jó minőségű bakancs!'),
 (1, 1, 'Egyetértek! Plusz egy réteges öltözet és egy kényelmes zsák is kötelező.');
 
--- Kedvencek teszt adat
 INSERT INTO KedvencTurak (user_id, tura_id) VALUES (1, 1);
 
--- Fórum Téma Lájkok teszt adat
-INSERT INTO TemaLikes (tema_id, user_id) VALUES 
-(1, 1), 
-(2, 1), 
-(1, 2); 
+INSERT INTO TemaLikes (tema_id, user_id) VALUES (1, 1), (2, 1), (1, 2); 
+
+-- JELVÉNYEK
+INSERT INTO Jelvenyek (nev, leiras, ikon) VALUES 
+('Kalandor', 'Sikeres regisztráció!', 'UserPlus'),
+('Hegyi kecske', 'Sok kedvenc túra.', 'Mountain'),
+('Lelkes támogató', 'Sok komment.', 'MessageSquare'),
+('Fotós', 'Feltöltött kép.', 'Camera');
+
+-- ADMIN JELVÉNYEK
+INSERT INTO UserJelvenyek (user_id, jelveny_id) VALUES (1, 1), (1, 2), (1, 3);
 GO

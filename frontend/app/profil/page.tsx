@@ -1,13 +1,25 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-// az összes szükséges ikon importja
-import { User, LogOut, Heart, Mountain, BarChart } from 'lucide-react';
+// JELVÉNYEK MODOSÍTÁS: Új ikonok importálása
+import { User, LogOut, Heart, Mountain, BarChart, Award, Camera, MessageSquare, UserPlus, HelpCircle } from 'lucide-react';
+
+// Segédfüggvény az ikonok dinamikus megjelenítéséhez
+const IconRenderer = ({ name, size = 24 }: { name: string, size?: number }) => {
+  const icons: any = {
+    Award, Mountain, MessageSquare, Camera, UserPlus
+  };
+  const IconComponent = icons[name] || HelpCircle;
+  return <IconComponent size={size} />;
+};
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
   const [turak, setTurak] = useState<any[]>([]);
   const [kedvencIds, setKedvencIds] = useState<number[]>([]);
+  // JELVÉNYEK MODOSÍTÁS: Új state a jelvényeknek
+  const [jelvenyek, setJelvenyek] = useState<any[]>([]);
+  
   const router = useRouter();
 
   useEffect(() => {
@@ -18,20 +30,25 @@ export default function ProfilePage() {
         const u = JSON.parse(savedUser);
         setUser(u);
         
-        // ÚTVONAL: Biztosítjuk, hogy a szerver portja és címe pontos
+        // Kedvencek lekérése
         fetch(`http://localhost:5000/api/turak/kedvencek/${u.id}`)
-          .then(res => {
-            if (!res.ok) throw new Error("404 vagy Szerver hiba");
-            return res.json();
-          })
+          .then(res => res.ok ? res.json() : Promise.reject())
           .then(data => {
             if (data.success && data.data) {
               const ids = data.data.map((k: any) => k.id || k.tura_id);
               setKedvencIds(ids);
-              localStorage.setItem('kedvenc_turak', JSON.stringify(ids));
             }
           })
           .catch(err => console.error("Hiba:", err));
+
+        // JELVÉNYEK MODOSÍTÁS: Jelvények lekérése a backendről
+        fetch(`http://localhost:5000/api/jelvenyek/user/${u.id}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) setJelvenyek(data.data);
+          })
+          .catch(err => console.error("Jelvény hiba:", err));
+
       } else {
         router.push('/bejelentkezes');
       }
@@ -50,7 +67,7 @@ export default function ProfilePage() {
     router.push('/bejelentkezes');
   };
 
-  if (!user) return <div className="min-h-screen flex items-center justify-center bg-background text-green-900 dark:text-green-500 uppercase italic text-2xl font-black transition-colors duration-300">Betöltés...</div>;
+  if (!user) return <div className="min-h-screen flex items-center justify-center bg-background text-green-900 dark:text-green-500 uppercase italic text-2xl font-black">Betöltés...</div>;
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300 flex flex-col">
@@ -93,14 +110,25 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Eredmények Kártya */}
+          {/* JELVÉNYEK MODOSÍTÁS: Frissített Eredmények/Jelvények Kártya */}
           <div className="bg-card p-8 rounded-[2.5rem] border border-card-border shadow-sm space-y-4 transition-colors duration-300 h-fit">
             <div className="flex items-center gap-3 text-green-600 dark:text-green-400 font-black uppercase italic">
-              <BarChart size={24} /> <span>Eredményeim</span>
+              <Award size={24} /> <span>Eredményeim</span>
             </div>
-            <div className="flex gap-4">
-              <div className="w-14 h-14 bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl flex items-center justify-center text-xl shadow-sm border border-yellow-100 dark:border-yellow-900/30 transition-colors">🏅</div>
-              <div className="w-14 h-14 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center text-xl shadow-sm border border-blue-100 dark:border-blue-900/30 transition-colors">🏔️</div>
+            <div className="grid grid-cols-3 gap-3">
+              {jelvenyek.length > 0 ? (
+                jelvenyek.map((j, index) => (
+                  <div key={index} className="group relative flex flex-col items-center">
+                    <div className="w-16 h-16 bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl flex items-center justify-center text-yellow-600 dark:text-yellow-500 shadow-sm border border-yellow-100 dark:border-yellow-900/30 transition-all hover:scale-110">
+                      <IconRenderer name={j.ikon} size={28} />
+                    </div>
+                    {/* Kis tooltip vagy felirat a névnek */}
+                    <p className="text-[10px] font-bold text-center mt-2 uppercase text-text-muted">{j.nev}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-text-muted font-bold italic py-4 col-span-3">Még nincsenek jelvényeid.</p>
+              )}
             </div>
           </div>
         </div>

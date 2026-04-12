@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Layers, BookOpen, Map, MessageSquare, ShieldCheck } from 'lucide-react';
+import { Layers, BookOpen, Map, MessageSquare, ShieldCheck, Camera } from 'lucide-react'; // Beimportáltuk a Camera ikont
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -13,19 +13,19 @@ export default function Sidebar() {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       const user = JSON.parse(savedUser);
-      // Itt állítsd be a feltételt (pl. user.role === 'admin' vagy user.email === 'admin@gmail.com')
       if (user.role === 'admin' || user.email === 'admin@gmail.com') {
         setIsAdmin(true);
       }
     }
   }, []);
 
-  // Alap menüpontok
+  // Alap menüpontok - Bővítve a Galériával
   const menuPontok = [
     { nev: 'Főoldal', ut: '/', ikon: <Layers size={20} /> },
     { nev: 'Rólunk', ut: '/rolunk', ikon: <BookOpen size={20} /> },
     { nev: 'Túrák', ut: '/turak', ikon: <Map size={20} /> },
     { nev: 'Fórum', ut: '/forum', ikon: <MessageSquare size={20} /> },
+    { nev: 'Galéria', ut: '/galeria', ikon: <Camera size={20} /> }, // ÚJ MENÜPONT
   ];
 
   // Ha admin, hozzáadjuk az Admin Panelt a listához

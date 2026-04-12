@@ -23,7 +23,7 @@ router.get('/kedvencek/:userId', async (req, res) => {
     }
 });
 
-// Kedvenc hozzáadása vagy eltávolítása (Toggle)
+// Kedvenc hozzáadása vagy eltávolítása (Toggle) + AUTOMATIKUS JELVÉNY
 router.post('/kedvencek', async (req, res) => {
     try {
         const { user_id, tura_id } = req.body;
@@ -41,6 +41,7 @@ router.post('/kedvencek', async (req, res) => {
                 .input('uid', sql.Int, user_id)
                 .input('tid', sql.Int, tura_id)
                 .query('DELETE FROM KedvencTurak WHERE user_id = @uid AND tura_id = @tid');
+            
             res.json({ success: true, message: 'Eltávolítva a kedvencek közül' });
         } else {
             // Ha nincs ott, hozzáadjuk
@@ -48,13 +49,45 @@ router.post('/kedvencek', async (req, res) => {
                 .input('uid', sql.Int, user_id)
                 .input('tid', sql.Int, tura_id)
                 .query('INSERT INTO KedvencTurak (user_id, tura_id) VALUES (@uid, @tid)');
-            res.json({ success: true, message: 'Hozzáadva a kedvencekhez' });
+
+            // 🏆 JELVÉNY LOGIKA: Megnézzük, jár-e a Hegyi kecske (ID: 2)
+            // Feltétel: legalább 3 'Nehéz' túra a kedvencekben
+            const badgeCheck = await pool.request()
+                .input('uid', sql.Int, user_id)
+                .query(`
+                    SELECT COUNT(*) as nehezCount 
+                    FROM KedvencTurak KT
+                    JOIN Turak T ON KT.tura_id = T.id
+                    WHERE KT.user_id = @uid AND T.nehezseg = 'Nehéz'
+                `);
+
+            const nehezCount = badgeCheck.recordset[0].nehezCount;
+
+            if (nehezCount >= 3) {
+                // Ha megvan a 3 nehéz túra, megpróbáljuk kiosztani a jelvényt (ha még nincs meg)
+                await pool.request()
+                    .input('uid', sql.Int, user_id)
+                    .input('jid', sql.Int, 2) // 2-es a Hegyi kecske
+                    .query(`
+                        IF NOT EXISTS (SELECT 1 FROM UserJelvenyek WHERE user_id = @uid AND jelveny_id = @jid)
+                        BEGIN
+                            INSERT INTO UserJelvenyek (user_id, jelveny_id) VALUES (@uid, @jid)
+                        END
+                    `);
+                console.log(`Hegyi kecske jelvény kiosztva a(z) ${user_id} ID-jú felhasználónak!`);
+            }
+
+            res.json({ success: true, message: 'Hozzáadva a kedvencekhez és jelvény ellenőrizve!' });
         }
     } catch (err) {
+        console.error("Hiba a kedvencek kezelésekor:", err.message);
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
+// ==========================================
+// TÚRÁK ALAPMŰVELETEI
+// ==========================================
 
 // Összes túra lekérése
 router.get('/', async (req, res) => {

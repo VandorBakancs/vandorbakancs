@@ -3,7 +3,7 @@ const { sql, poolPromise } = require('../dbconfig');
 const router = express.Router();
 
 // ==========================================
-// 1. BEJELENTKEZÉS 
+// BEJELENTKEZÉS 
 // ==========================================
 router.post('/login', async (req, res) => {
     try {
@@ -38,7 +38,7 @@ router.post('/login', async (req, res) => {
 });
 
 // ==========================================
-// 2. REGISZTRÁCIÓ 
+// REGISZTRÁCIÓ + AUTOMATIKUS JELVÉNY
 // ==========================================
 router.post('/register', async (req, res) => {
     try {
@@ -50,6 +50,7 @@ router.post('/register', async (req, res) => {
 
         const pool = await poolPromise;
 
+        // Ellenőrizzük, létezik-e már a felhasználó
         const checkUser = await pool.request()
             .input('email', sql.NVarChar, email)
             .query('SELECT id FROM Users WHERE email = @email');
@@ -58,13 +59,28 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ success: false, error: "Ez az email cím már használatban van!" });
         }
 
-        await pool.request()
+        // Felhasználó létrehozása és az új ID lekérése
+        const userInsertResult = await pool.request()
             .input('nev', sql.NVarChar, nev)
             .input('email', sql.NVarChar, email)
             .input('password', sql.NVarChar, password)
-            .query('INSERT INTO Users (nev, email, password, role) VALUES (@nev, @email, @password, \'user\')');
+            .query('INSERT INTO Users (nev, email, password, role) OUTPUT INSERTED.id VALUES (@nev, @email, @password, \'user\')');
 
-        res.json({ success: true, message: "Sikeres regisztráció!" });
+        const newUserId = userInsertResult.recordset[0].id;
+
+        // 🏆 Automatikus jelvény kiosztása (Kalandor - ID: 1)
+        try {
+            await pool.request()
+                .input('userId', sql.Int, newUserId)
+                .input('jelvenyId', sql.Int, 1) // Az SQL-ben a Kalandor az 1-es ID-t kapta
+                .query('INSERT INTO UserJelvenyek (user_id, jelveny_id) VALUES (@userId, @jelvenyId)');
+            console.log(`Jelvény sikeresen kiosztva az új felhasználónak (ID: ${newUserId})`);
+        } catch (badgeError) {
+            // Ha a jelvény nem sikerül, a regisztrációt még ne rontsuk el, csak logoljuk
+            console.error("Hiba a jelvény kiosztásakor:", badgeError.message);
+        }
+
+        res.json({ success: true, message: "Sikeres regisztráció és Kalandor jelvény megszerezve!" });
 
     } catch (error) {
         console.error("Regisztrációs hiba a szerveren:", error.message);
