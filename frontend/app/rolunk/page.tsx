@@ -34,7 +34,7 @@ export default function RolunkPage() {
             <div>
               <h2 className="text-2xl font-black text-green-900 dark:text-green-400 uppercase italic">Szenvedélyünk</h2>
               <p className="text-text-muted font-bold mt-2 leading-relaxed">
-                Hisszük, hogy a természetben töltött idő nem csupán kikapcsolódás, hanem lehetőség a fejlődésre és a feltöltődésre. A VándorBakancsot azért hoztuk létre, hogy ezt az élményt mindenki számára elérhetővé tegyük.
+                Hisszük, hogy a természetben töltött idő nem csupán kikapcsolódás, hanem lehetőség a fejlődésre és a feltöltődésre. A Zöldösvényt azért hoztuk létre, hogy ezt az élményt mindenki számára elérhetővé tegyük.
               </p>
             </div>
           </div>

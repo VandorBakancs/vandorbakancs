@@ -14,7 +14,7 @@ export default function TurakPage() {
   // Pontos összerendelés a túra neve és a képfájl neve között
   const kepMap: Record<string, string> = {
     "Szent Anna-tó körüli séta": "szentannato",
-    "Gyilkos-tó és Békás-szoros": "gyilkosto", // Frissítve a gyilkosto.jpg-hez
+    "Gyilkos-tó és Békás-szoros": "gyilkosto", 
     "Tordai-hasadék túra": "tordaihasadek",
     "Madarasi Hargita csúcstúra": "madarasi",
     "Fogarasi-havasok: Bilea-tó": "bileato",
@@ -31,7 +31,7 @@ export default function TurakPage() {
     "Szalajka-völgy séta": "szalajka",
     "Nagy-Eged hegy": "nagyeged",
     "Csóványos kilátó": "csovanyos",
-    "Megyer-hegyi Tengerszem": "tengerszem", // Frissítve a tengerszem.jpg-hez
+    "Megyer-hegyi Tengerszem": "tengerszem", 
     "Hollókő vár túra": "holloko",
     "Bakony: Cuha-völgy": "cuhavolgy",
     "Zengő csúcstúra": "zengo",
@@ -100,7 +100,12 @@ export default function TurakPage() {
 
     fetch(API_URL)
       .then(res => res.ok ? res.json() : Promise.reject())
-      .then(data => setTurak(data.data || []))
+      .then(data => {
+        const osszesTura = data.data || [];
+        // ITT A JAVÍTÁS: Szűrjük ki, ha a név TARTALMAZZA az "off-topic" kifejezést
+        const lathatoTurak = osszesTura.filter((t: any) => t.nev && !t.nev.toLowerCase().includes('off-topic'));
+        setTurak(lathatoTurak);
+      })
       .catch(() => setHiba(true));
   }, []);
 
