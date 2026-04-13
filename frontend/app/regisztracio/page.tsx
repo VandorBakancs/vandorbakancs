@@ -25,6 +25,7 @@ export default function RegisterPage() {
             const data = await res.json();
 
             if (res.ok && data.success) {
+                window.alert('Sikeres regisztráció!');
                 router.push('/bejelentkezes'); 
             } else {
                 setError(data.error || "Hiba a regisztráció során.");
@@ -44,7 +45,7 @@ export default function RegisterPage() {
                     <div className="inline-block p-4 bg-green-50 dark:bg-green-900/20 rounded-3xl text-green-600 dark:text-green-500 mb-4 transition-colors">
                         <Mountain size={48}/>
                     </div>
-                    <h1 className="text-3xl font-black text-green-900 dark:text-green-400 uppercase italic transition-colors">Csatlakozz</h1>
+                    <h1 className="text-3xl font-black text-green-900 dark:text-green-400 uppercase italic transition-colors">Regisztráció</h1>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">

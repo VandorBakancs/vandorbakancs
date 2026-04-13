@@ -33,6 +33,8 @@ export default function LoginPage() {
                 console.log('Sikeres belépés!', data.user);
                 localStorage.setItem('user', JSON.stringify(data.user));
                 
+                window.alert('Sikeres bejelentkezés!');
+                
                 if (data.user.role === 'admin') {
                     window.location.href = '/admin'; 
                 } else {
