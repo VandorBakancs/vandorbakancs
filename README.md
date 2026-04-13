@@ -1,4 +1,4 @@
-# 🥾 Vándor Bakancs Projektmunka
+# 🥾 Zöldösvény Projektmunka
 
 ## 👥 Csapattagok
 - Magyari Dávid Krisztián
