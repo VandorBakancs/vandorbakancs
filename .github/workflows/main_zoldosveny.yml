@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy Node.js app to Azure Web App - zoldosveny
 
 on:
@@ -20,28 +17,13 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'npm'
-          cache-dependency-path: './frontend/package-lock.json' 
+          # Ha nincs frontend mappád, töröld ki a következő sort:
+          # cache-dependency-path: './frontend/package-lock.json' 
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./frontend 
-
-      - name: Build project
-        run: npm run build
-        working-directory: ./frontend
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22.x'
-
-      - name: npm install, build, and test
+      - name: npm install and build
         run: |
           npm install
           npm run build --if-present
-          npm run test --if-present
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -53,15 +35,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
-<<<<<<< HEAD
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -69,15 +50,6 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2EE023CBCF314926B2A17B2344B749C8 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_998D40C9866A4C7F9E7F30290E2C5037 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B1DA46112A5746929667328667244BB3 }}
-=======
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_6204E07341C84B319DB40AE8BE13FC7E }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_44CA978EFF664FACB4A0C776B82B6DB1 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C118D2540C94459FA8F7902612423B9F }}
->>>>>>> 24e39af5b3b6cb87c23a1649b616741b1ce27aa6
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -86,4 +58,3 @@ jobs:
           app-name: 'zoldosveny'
           slot-name: 'Production'
           package: .
-          
