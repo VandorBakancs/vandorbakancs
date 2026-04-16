@@ -1,5 +1,5 @@
 {
-  "name": "vandorbakancs",
+  "name": "vandorbakancs-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,12 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "lucide-react": "^0.450.0",
+    "lucide-react": "latest",
     "next": "latest",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "mssql": "^10.0.1",
-    "dotenv": "^16.4.5"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -17,20 +17,22 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'npm'
-          # A frontend mappában lévő lock fájlt nézzük
           cache-dependency-path: './frontend/package-lock.json'
 
       - name: Install and Build Frontend
         run: |
-          npm install
+          npm install --force
           npm run build
         working-directory: ./frontend
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          # Csak a frontend mappa tartalmát küldjük az Azure-nak
           path: ./frontend
 
   deploy:
