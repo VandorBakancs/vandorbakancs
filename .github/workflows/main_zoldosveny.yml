@@ -17,19 +17,19 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'npm'
-          # Ha nincs frontend mappád, töröld ki a következő sort:
-          # cache-dependency-path: './frontend/package-lock.json' 
+          cache-dependency-path: './frontend/package-lock.json'
 
       - name: npm install and build
         run: |
           npm install
           npm run build --if-present
+        working-directory: ./frontend
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: ./frontend  # Csak a frontend mappa tartalmát küldjük az Azure-nak
 
   deploy:
     runs-on: ubuntu-latest
