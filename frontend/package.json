@@ -1,27 +1,27 @@
 {
-  "name": "vandorbakancs-frontend",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint"
   },
   "dependencies": {
-    "lucide-react": "latest",
-    "next": "latest",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "lucide-react": "^0.577.0",
+    "next": "^16.1.6",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "latest",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4",
     "typescript": "^5"
   }
 }
