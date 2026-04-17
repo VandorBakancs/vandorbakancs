@@ -40,10 +40,29 @@ export default function TurakPage() {
   };
 
   // Térkép URL-ek összerendelése a túrák nevével
-  const terkepMap: Record<string, string> = {
-    "Szent Anna-tó körüli séta": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2757.265747164168!2d25.885863876800044!3d46.12555558905389!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x474b45508f751f7d%3A0xc6c4217746df2204!2sSfânta%20Ana!5e0!3m2!1sen!2shu!4v1711200000000!5m2!1sen!2shu",
-    "Gyilkos-tó és Békás-szoros": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2740.923456789!2d25.789!3d46.789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDbCsDQ3JzIwLjQiTiAyNcKwNDcnMjAuNCJF!5e0!3m2!1sen!2shu!4v1711200000001!5m2!1sen!2shu",
-    // ... további térképek URL-jei
+ const terkepMap: Record<string, string> = {
+    "Szent Anna-tó körüli séta": "https://www.google.com/maps/d/u/0/embed?mid=1BZvLVtYkCBUjFwEsr33_MQOLBoLp1U0&ehbc=2E312F&noprof=1",
+    "Gyilkos-tó és Békás-szoros": "https://www.google.com/maps/d/u/0/embed?mid=1PrqY-cw872JJkJtaiqOIsDzLI8yyPfA&ehbc=2E312F&noprof=1",
+    "Tordai-hasadék túra": "https://www.google.com/maps/d/u/0/embed?mid=1C0sVXBWca2SVh1LHIVz0Cka5yhUnsf8&ehbc=2E312F&noprof=1",
+    "Madarasi Hargita csúcstúra": "https://www.google.com/maps/d/u/0/embed?mid=1Tj5E_hUm4G8q1rEPTGPOmplNIL00mvs&ehbc=2E312F&noprof=1",
+    "Fogarasi-havasok: Bilea-tó": "https://www.google.com/maps/d/u/0/embed?mid=1WFUfq79nX4Diw3MQKZ7aKpgZsZXcPGo&ehbc=2E312F&noprof=1",
+    "Királykő-hegység gerinctúra": "https://www.google.com/maps/d/u/0/embed?mid=1tBvfzyvtM1AgCbtJ-aCiDQ-8XkXAhbc&ehbc=2E312F&noprof=1",
+    "Medve-barlang látogatás": "https://www.google.com/maps/d/u/0/embed?mid=1UaNIm0SYHOuh5zgUwrq7zR4P2987PVs&ehbc=2E312F&noprof=1",
+    "Torockó: Székelykő mászás": "https://www.google.com/maps/d/u/0/embed?mid=1FNQWkkODrIGphxvaATze559vICJoXAg&ehbc=2E312F&noprof=1",
+    "Parajdi Sóbánya és Sószoros": "https://www.google.com/maps/d/u/0/embed?mid=1xXqu4QfT2I5RMs2MLf6sb2sI3GZbClU&ehbc=2E312F&noprof=1",
+    "Kékes-tető csúcstámadás": "https://www.google.com/maps/d/u/0/embed?mid=12AbVFVMjU4vdNTcApnTXRTPgC9jjjxs&ehbc=2E312F&noprof=1",
+    "Rám-szakadék kaland": "https://www.google.com/maps/d/u/0/embed?mid=1pzOFFJ6PHPTB3SGJw3mzZSTLyNrSph8&ehbc=2E312F&noprof=1",
+    "Prédikálószék kilátó": "https://www.google.com/maps/d/u/0/embed?mid=1zK58b_zh7tfVyMmqAUI2ozDIDhFw_Kw&ehbc=2E312F&noprof=1",
+    "Badacsony bazaltorgonák": "https://www.google.com/maps/d/u/0/embed?mid=17f74QetLgsSwqjctIHFfVtNfy3tK-6Y&ehbc=2E312F&noprof=1",
+    "Dobogókő kilátás": "https://www.google.com/maps/d/u/0/embed?mid=1D-Z9HPIUArE1ObDyWH9FrpGRMA_sKdg&ehbc=2E312F&noprof=1",
+    "Szalajka-völgy séta": "https://www.google.com/maps/d/u/0/embed?mid=1eAxbiOFeE32s2aw_OUSLieN67ZGMUv8&ehbc=2E312F&noprof=1",
+    "Nagy-Eged hegy": "https://www.google.com/maps/d/u/0/embed?mid=1heaAiBhbnT3k_-7Sg_Vk7vKE-0g8dLI&ehbc=2E312F&noprof=1",
+    "Csóványos kilátó": "https://www.google.com/maps/d/u/0/embed?mid=1kqyjEuUN3vZoF6e4eVlMgnpJUjT88Ew&ehbc=2E312F&noprof=1",
+    "Megyer-hegyi Tengerszem": "https://www.google.com/maps/d/u/0/embed?mid=1AWo8YTH9Idcsi8NrPh6tOiMOSbV6yCE&ehbc=2E312F&noprof=1",
+    "Hollókő vár túra": "https://www.google.com/maps/d/u/0/embed?mid=1r4xzlfVXtOtf0kRmaxG2zXUy0K4zNLs&ehbc=2E312F&noprof=1",
+    "Bakony: Cuha-völgy": "https://www.google.com/maps/d/u/0/embed?mid=1qOGNwrLjyH0GdcQnsJJkcMrSwnCJKjU&ehbc=2E312F&noprof=1",
+    "Zengő csúcstúra": "https://www.google.com/maps/d/u/0/embed?mid=1BrjcTWY8ZwUVNQZ-4BHzMhSpIHd47MY&ehbc=2E312F&noprof=1",
+    "Velencei-hegység: Ingókövek": "https://www.google.com/maps/d/u/0/embed?mid=1xiPimu9ZKLK3K-SAhgBc6X3daXbLn9c&ehbc=2E312F&noprof=1"
   };
 
   const getKepNev = (turaNev: string): string => {
