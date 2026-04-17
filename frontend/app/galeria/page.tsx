@@ -44,14 +44,14 @@ export default function GaleriaPage() {
         setUploading(true);
         const formData = new FormData();
         
-        // JAVÍTVA: 'image' helyett 'kep', mert a backend upload.single('kep')-et vár!
+        
         formData.append('kep', selectedFile);
         formData.append('tura_id', selectedTura);
         formData.append('user_id', user.id);
         formData.append('leiras', leiras);
 
         try {
-            // JAVÍTVA: A '/feltoltes' lekerült a végéről, mert a backend a sima '/' útvonalon várja a POST kérést!
+            //útvonalon várja a POST kérést!
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/galeria`, {
                 method: 'POST',
                 body: formData,

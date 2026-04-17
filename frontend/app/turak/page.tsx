@@ -9,7 +9,7 @@ export default function TurakPage() {
   const [user, setUser] = useState<any>(null);
   const [kedvencek, setKedvencek] = useState<number[]>([]);
 
-  // JAVÍTVA: Környezeti változó használata a fix URL helyett
+  
   const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/turak`;
 
   // Pontos összerendelés a túra neve és a képfájl neve között
