@@ -6,9 +6,13 @@ const app = express();
 
 // CORS és JSON middleware (kötelező az útvonalak előtt!!!!!!!)
 app.use(cors({
-    origin: '*', 
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type']
+    origin: [
+        'http://localhost:3000', // helyi fejlesztéshez
+        'vandorbakancs.vercel.app' 
+    ], 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'], // Authorization engedélyezése a login miatt
+    credentials: true // Sütik és tokenek átengedése a két szerver között
 }));
 
 app.use(express.json());
@@ -20,11 +24,9 @@ const forumRoutes = require('./routes/forum');
 const jelvenyRoutes = require('./routes/jelvenyek');
 const galeriaRoutes = require('./routes/galeria');
 
-
 app.use('/uploads', express.static('uploads')); 
 
 // útvonalak regisztrációja
-
 app.use('/api/turak', turaRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
@@ -34,7 +36,6 @@ app.use('/api/galeria', galeriaRoutes);
 app.get('/', (req, res) => {
     res.send('<h1>A Vándor Bakancs szerver online!</h1>');
 });
-
 
 const PORT = process.env.PORT || 5000;
 
