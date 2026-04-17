@@ -33,7 +33,7 @@ export default function ForumPage() {
   const fetchTemak = async () => {
     try {
       setBetöltés(true);
-      const res = await fetch('http://localhost:5000/api/forum/temak', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/temak`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors'
@@ -49,7 +49,7 @@ export default function ForumPage() {
 
   const fetchUserLikes = async (userId: number) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/forum/likes/user/${userId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/likes/user/${userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors'
@@ -63,7 +63,7 @@ export default function ForumPage() {
 
   const fetchKommentek = async (temaId: number) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/forum/kommentek/${temaId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/kommentek/${temaId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors'
@@ -80,7 +80,7 @@ export default function ForumPage() {
     if (!bejelentkezettUser) return alert("A lájkoláshoz be kell jelentkezned!");
 
     try {
-      const res = await fetch('http://localhost:5000/api/forum/like', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/like`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
@@ -109,7 +109,7 @@ export default function ForumPage() {
     if (!ujTemaCim.trim() || !bejelentkezettUser) return;
 
     try {
-      const res = await fetch('http://localhost:5000/api/forum/temak', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/temak`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
@@ -131,7 +131,7 @@ export default function ForumPage() {
     if (!ujKommentSzoveg.trim() || !aktivTema || !bejelentkezettUser) return;
 
     try {
-      const res = await fetch('http://localhost:5000/api/forum/kommentek', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/kommentek`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
@@ -307,7 +307,7 @@ export default function ForumPage() {
               </form>
             ) : (
               <div className="bg-amber-50 dark:bg-amber-950/20 p-6 rounded-[2.5rem] border border-amber-100 dark:border-amber-900/50 text-center font-bold text-amber-700 dark:text-amber-500 text-sm italic transition-colors">
-                  🔒 A hozzászóláshoz be kell jelentkezned!
+                🔒 A hozzászóláshoz be kell jelentkezned!
               </div>
             )}
           </div>

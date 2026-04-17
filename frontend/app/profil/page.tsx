@@ -31,7 +31,7 @@ export default function ProfilePage() {
         setUser(u);
         
         // Kedvencek lekérése
-        fetch(`http://localhost:5000/api/turak/kedvencek/${u.id}`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/turak/kedvencek/${u.id}`)
           .then(res => res.ok ? res.json() : Promise.reject())
           .then(data => {
             if (data.success && data.data) {
@@ -42,7 +42,7 @@ export default function ProfilePage() {
           .catch(err => console.error("Hiba:", err));
 
         // JELVÉNYEK MODOSÍTÁS: Jelvények lekérése a backendről
-        fetch(`http://localhost:5000/api/jelvenyek/user/${u.id}`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/jelvenyek/user/${u.id}`)
           .then(res => res.json())
           .then(data => {
             if (data.success) setJelvenyek(data.data);
@@ -54,7 +54,7 @@ export default function ProfilePage() {
       }
     }
 
-    fetch('http://localhost:5000/api/turak')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/turak`)
       .then(res => res.json())
       .then(data => setTurak(data.data || []))
       .catch(console.error);

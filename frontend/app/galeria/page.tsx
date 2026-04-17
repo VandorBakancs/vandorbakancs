@@ -22,8 +22,8 @@ export default function GaleriaPage() {
     const fetchAdatok = async () => {
         try {
             const [kepekRes, turakRes] = await Promise.all([
-                fetch('http://localhost:5000/api/galeria'),
-                fetch('http://localhost:5000/api/turak')
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/galeria`),
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/turak`)
             ]);
             const kepekData = await kepekRes.json();
             const turakData = await turakRes.json();
@@ -52,7 +52,7 @@ export default function GaleriaPage() {
 
         try {
             // JAVÍTVA: A '/feltoltes' lekerült a végéről, mert a backend a sima '/' útvonalon várja a POST kérést!
-            const res = await fetch('http://localhost:5000/api/galeria', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/galeria`, {
                 method: 'POST',
                 body: formData,
             });
@@ -139,7 +139,7 @@ export default function GaleriaPage() {
                             {/* Kép konténer */}
                             <div className="relative h-64 overflow-hidden">
                                 <img 
-                                    src={`http://localhost:5000${kep.kep_url}`} 
+                                    src={`${process.env.NEXT_PUBLIC_API_URL}${kep.kep_url}`} 
                                     alt={kep.leiras}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />

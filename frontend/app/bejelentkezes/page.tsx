@@ -16,7 +16,7 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/login', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export default function LoginPage() {
             }
         } catch (err) {
             console.error('Hiba a kérés során:', err);
-            setError('A szerver nem válaszol! Indítsd el a backendet az 5000-es porton.');
+            setError('A szerver nem válaszol! Ellenőrizd a hálózati kapcsolatot vagy az API URL-t.');
         } finally {
             setLoading(false);
         }

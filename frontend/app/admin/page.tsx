@@ -36,7 +36,7 @@ export default function AdminPage() {
 
     const fetchTurak = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/turak');
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/turak`);
             if (!res.ok) return console.error("Hiba a túrák lekérésekor");
             const result = await res.json();
             if (result.success) setTurak(result.data);
@@ -47,7 +47,7 @@ export default function AdminPage() {
 
     const fetchTemak = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/forum/temak');
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/temak`);
             if (!res.ok) return console.error("Hiba a témák lekérésekor");
             const result = await res.json();
             if (result.success) setTemak(result.data);
@@ -58,7 +58,7 @@ export default function AdminPage() {
 
     const fetchKommentek = async (temaId: number) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/forum/kommentek/${temaId}`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/kommentek/${temaId}`);
             if (!res.ok) return console.error("Hiba a kommentek lekérésekor");
             const result = await res.json();
             if (result.success) {
@@ -72,7 +72,7 @@ export default function AdminPage() {
 
     const fetchKepek = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/galeria');
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/galeria`);
             if (!res.ok) return console.error("Hiba a galéria lekérésekor");
             const result = await res.json();
             if (result.success) setKepek(result.data);
@@ -86,7 +86,7 @@ export default function AdminPage() {
     const deleteTura = async (id: number) => {
         if (confirm("Biztosan törlöd a túrát?")) {
             try {
-                const res = await fetch(`http://localhost:5000/api/turak/${id}`, { method: 'DELETE' });
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/turak/${id}`, { method: 'DELETE' });
                 if (!res.ok) return alert("Szerver hiba történt törléskor!");
                 const result = await res.json();
                 if (result.success) fetchTurak();
@@ -99,7 +99,7 @@ export default function AdminPage() {
     const deleteTema = async (id: number) => {
         if (confirm("Biztosan törlöd?")) {
             try {
-                const res = await fetch(`http://localhost:5000/api/forum/temak/${id}`, { method: 'DELETE' });
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/temak/${id}`, { method: 'DELETE' });
                 if (!res.ok) return alert("Szerver hiba történt törléskor!");
                 const result = await res.json();
                 if (result.success) {
@@ -116,7 +116,7 @@ export default function AdminPage() {
     const deleteKomment = async (kommentId: number) => {
         if (confirm("Biztosan törlöd?")) {
             try {
-                const res = await fetch(`http://localhost:5000/api/forum/kommentek/${kommentId}`, { method: 'DELETE' });
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/kommentek/${kommentId}`, { method: 'DELETE' });
                 if (!res.ok) return alert("Szerver hiba történt törléskor!");
                 const result = await res.json();
                 if (result.success && aktivTemaId) fetchKommentek(aktivTemaId);
@@ -129,7 +129,7 @@ export default function AdminPage() {
     const deleteKep = async (kepId: number) => {
         if (confirm("Biztosan törlöd ezt a képet? A fájl is véglegesen törlődik a szerverről!")) {
             try {
-                const res = await fetch(`http://localhost:5000/api/galeria/${kepId}`, { method: 'DELETE' });
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/galeria/${kepId}`, { method: 'DELETE' });
                 if (!res.ok) return alert("Szerver hiba: Lehet, hogy nem fut a backend?");
                 const result = await res.json();
                 if (result.success) {
@@ -148,7 +148,7 @@ export default function AdminPage() {
     const addTura = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await fetch('http://localhost:5000/api/turak', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/turak`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newTura)
@@ -196,7 +196,7 @@ export default function AdminPage() {
                             kepek.map((k) => (
                                 <div key={k.id} className="flex items-center gap-4 p-4 bg-green-50/40 dark:bg-neutral-800 rounded-3xl hover:bg-green-50 dark:hover:bg-neutral-700 transition-all">
                                     <img 
-                                        src={`http://localhost:5000${k.kep_url}`} 
+                                        src={`${process.env.NEXT_PUBLIC_API_URL}${k.kep_url}`} 
                                         alt={k.turaNev} 
                                         className="w-16 h-16 object-cover rounded-2xl border-2 border-green-200 dark:border-neutral-600 shadow-sm"
                                     />

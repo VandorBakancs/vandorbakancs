@@ -16,7 +16,7 @@ export default function RegisterPage() {
         setLoading(true);
 
         try {
-            const res = await fetch('http://localhost:5000/api/auth/register', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -31,7 +31,7 @@ export default function RegisterPage() {
                 setError(data.error || "Hiba a regisztráció során.");
             }
         } catch (err) {
-            setError("Szerver hiba. Nem sikerült elérni a backendet az 5000-es porton.");
+            setError("Szerver hiba! Ellenőrizd a hálózati kapcsolatot vagy az API URL-t.");
         } finally {
             setLoading(false);
         }

@@ -5,7 +5,7 @@ const sql = require('mssql');
 const config = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  server: process.env.DB_SERVER, // Pl. zoldosveny.database.windows.net
+  server: process.env.DB_SERVER, // 1
   database: process.env.DB_NAME,
   options: {
     encrypt: true, // Azure SQL esetén ez a sor KÖTELEZŐ!
