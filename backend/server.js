@@ -34,7 +34,7 @@ app.use('/api/jelvenyek', jelvenyRoutes);
 app.use('/api/galeria', galeriaRoutes); 
 
 app.get('/', (req, res) => {
-    res.send('<h1>A Vándor Bakancs szerver online!</h1>');
+    res.send('<h1>A backend szerver online!</h1>');
 });
 
 const PORT = process.env.PORT || 5000;
