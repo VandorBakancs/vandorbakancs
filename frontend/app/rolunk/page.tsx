@@ -64,7 +64,7 @@ export default function RolunkPage() {
               </p>
               <div className="mt-4 p-5 bg-green-50 dark:bg-green-900/10 rounded-3xl border-2 border-dashed border-green-200 dark:border-green-900/50 flex items-center justify-center transition-colors">
                  <span className="text-green-700 dark:text-green-500 font-black tracking-widest uppercase text-xl text-center">
-                   majd ide
+                   magyari.david.krisztian@ganziskola.hu / kassai.peter@ganziskola.hu
                  </span>
               </div>
             </div>
