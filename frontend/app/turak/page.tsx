@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { MapPin, Clock, Search, ChevronRight, Mountain, Info, CheckCircle, Heart, Map } from 'lucide-react';
+import { MapPin, Clock, Search, ChevronRight, Mountain, Info, CheckCircle, Heart, Map, Route } from 'lucide-react';
 
 export default function TurakPage() {
   const [turak, setTurak] = useState<any[]>([]);
@@ -211,6 +211,7 @@ export default function TurakPage() {
                     <h3 className="font-black text-green-900 dark:text-green-400 text-xl uppercase italic tracking-tight">{t.nev}</h3>
                     <div className="flex flex-wrap gap-2 sm:gap-4 text-[10px] font-black text-green-700 dark:text-green-500 uppercase mt-2 tracking-widest">
                       <span className="flex items-center gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg transition-colors"><MapPin size={12}/> {t.helyszin}</span>
+                      <span className="flex items-center gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg transition-colors"><Route size={12}/> {t.tav}</span>
                       <span className="flex items-center gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg transition-colors"><Clock size={12}/> {t.idotartam}</span>
                     </div>
                   </div>
